@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thomas's Math Quest 🗺️</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue:#2563eb; --blue-l:#3b82f6; --blue-pale:#eff6ff;
+  --sun:#f59e0b; --sun-pale:#fffbeb;
+  --green:#16a34a; --green-l:#22c55e; --green-pale:#f0fdf4;
+  --red:#dc2626; --red-pale:#fef2f2;
+  --purple:#7c3aed; --purple-pale:#f5f3ff;
+  --bg:#f8fafc; --card:#fff; --text:#0f172a; --muted:#64748b; --border:#e2e8f0;
+  --radius:18px; --shadow:0 2px 16px rgba(37,99,235,.10);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.screen{display:none;min-height:100vh;flex-direction:column}
+.screen.active{display:flex}
+
+/* HOME */
+#home{align-items:center;justify-content:center;background:linear-gradient(160deg,#1d4ed8 0%,#1e40af 60%,#0f172a 100%);gap:24px;padding:48px 24px;position:relative;overflow:hidden}
+#home::before{content:'';position:absolute;top:-120px;right:-120px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(251,191,36,.18) 0%,transparent 70%);pointer-events:none}
+#home::after{content:'';position:absolute;bottom:-80px;left:-80px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(59,130,246,.25) 0%,transparent 70%);pointer-events:none}
+.home-rocket{font-size:80px;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.home-title{font-family:'Baloo 2',cursive;font-size:clamp(36px,8vw,64px);font-weight:800;color:#fff;text-align:center;line-height:1.1}
+.home-title em{color:var(--sun);font-style:normal}
+.home-sub{color:rgba(255,255,255,.65);font-size:15px;font-weight:600;text-align:center}
+.super-dad-badge{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);border-radius:100px;padding:10px 24px;color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.home-btns{display:flex;flex-direction:column;gap:14px;width:100%;max-width:340px}
+.btn-primary{padding:18px;background:var(--sun);color:#fff;border:none;border-radius:100px;font-family:'Baloo 2',cursive;font-size:22px;font-weight:700;cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:0 6px 24px rgba(245,158,11,.4)}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 10px 32px rgba(245,158,11,.5)}
+.btn-secondary{padding:14px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);border:1.5px solid rgba(255,255,255,.2);border-radius:100px;font-family:'Nunito',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:background .15s}
+.btn-secondary:hover{background:rgba(255,255,255,.15)}
+
+/* KID HUB */
+#kid-hub{background:var(--bg)}
+.top-bar{background:var(--blue);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(37,99,235,.2)}
+.top-bar h1{font-family:'Baloo 2',cursive;color:#fff;font-size:20px;font-weight:800}
+.top-bar-right{display:flex;align-items:center;gap:10px}
+.stars-pill{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.18);border-radius:100px;padding:5px 14px}
+.stars-pill strong{color:#fff;font-size:16px;font-weight:900}
+.streak-pill{display:flex;align-items:center;gap:5px;background:rgba(245,158,11,.3);border-radius:100px;padding:5px 12px}
+.streak-pill span{font-size:14px}
+.streak-pill strong{color:#fef08a;font-size:14px;font-weight:900}
+.xp-wrap{background:rgba(255,255,255,.15);height:6px;margin:0 20px;border-radius:6px}
+.xp-fill{height:100%;border-radius:6px;background:var(--sun);transition:width .5s}
+.kid-body{padding:20px;max-width:860px;margin:0 auto;width:100%}
+
+/* DAILY CAP */
+.cap-banner{border-radius:12px;padding:12px 18px;margin-bottom:16px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:10px}
+.cap-banner.active{background:var(--sun-pale);color:#92400e;border:1.5px solid #fcd34d}
+.cap-banner.full{background:var(--red-pale);color:var(--red);border:1.5px solid #fca5a5}
+.cap-bar-wrap{flex:1;background:rgba(0,0,0,.08);border-radius:6px;height:7px}
+.cap-bar-fill{height:100%;border-radius:6px;background:var(--sun);transition:width .4s}
+.cap-bar-fill.full{background:var(--red)}
+
+/* MISSIONS */
+.missions-card{background:linear-gradient(135deg,#1e293b,#0f172a);border-radius:var(--radius);padding:20px 22px;margin-bottom:18px;box-shadow:0 4px 20px rgba(15,23,42,.3)}
+.missions-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.missions-head h3{font-family:'Baloo 2',cursive;color:#fff;font-size:18px;font-weight:800}
+.missions-bonus{background:rgba(245,158,11,.2);border:1.5px solid rgba(245,158,11,.5);border-radius:100px;padding:4px 12px;color:#fcd34d;font-size:12px;font-weight:800}
+.mission-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.mission-row:last-child{border-bottom:none}
+.mission-check{width:26px;height:26px;border-radius:50%;border:2px solid #475569;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.mission-check.done{background:var(--green-l);border-color:var(--green-l)}
+.mission-info{flex:1}
+.mission-info strong{color:#e2e8f0;font-size:14px;display:block}
+.mission-info span{color:#64748b;font-size:11px}
+.mission-go{background:var(--blue);color:#fff;border:none;border-radius:100px;padding:7px 16px;font-family:'Baloo 2',cursive;font-size:13px;font-weight:700;cursor:pointer}
+.mission-go:hover{background:#1d4ed8}
+.mission-go.done-btn{background:#1e293b;color:#4ade80;cursor:default;border:1.5px solid #16a34a}
+.missions-complete-banner{background:linear-gradient(120deg,#16a34a,#0891b2);border-radius:12px;padding:12px 16px;color:#fff;font-weight:800;font-size:14px;text-align:center;margin-top:12px;display:none}
+.missions-complete-banner.show{display:block;animation:slideUp .3s ease}
+
+/* REWARD STRIP */
+.reward-strip{background:linear-gradient(120deg,var(--sun) 0%,#f43f5e 100%);border-radius:var(--radius);padding:18px 22px;color:#fff;margin-bottom:20px;box-shadow:0 4px 20px rgba(245,158,11,.3)}
+.reward-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.reward-top h3{font-size:11px;opacity:.85;text-transform:uppercase;letter-spacing:1px}
+.reward-name-big{font-family:'Baloo 2',cursive;font-size:20px;font-weight:800}
+.reward-nums{font-family:'Baloo 2',cursive;font-size:28px;font-weight:800}
+.rew-bar-wrap{background:rgba(255,255,255,.3);border-radius:8px;height:10px;width:100%;margin-top:8px}
+.rew-bar-fill{height:100%;border-radius:8px;background:#fff;transition:width .5s}
+.claim-btn{display:none;margin-top:14px;width:100%;padding:14px;background:#fff;color:#f43f5e;border:none;border-radius:12px;font-family:'Baloo 2',cursive;font-size:20px;font-weight:800;cursor:pointer;animation:pulse 1.5s ease-in-out infinite;box-shadow:0 4px 16px rgba(0,0,0,.15)}
+.claim-btn.show{display:block}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
+
+/* BADGES */
+.badges-wrap{margin-bottom:24px}
+.badges-scroll{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px}
+.badge-chip{flex-shrink:0;display:flex;align-items:center;gap:8px;background:var(--card);border-radius:100px;padding:8px 14px;box-shadow:0 1px 6px rgba(0,0,0,.07);border:2px solid var(--border)}
+.badge-chip.lvl-1{border-color:#d1d5db}
+.badge-chip.lvl-2{border-color:#f59e0b;background:var(--sun-pale)}
+.badge-chip.lvl-3{border-color:#3b82f6;background:var(--blue-pale)}
+.badge-chip.lvl-4{border-color:#7c3aed;background:var(--purple-pale)}
+.badge-chip .b-icon{font-size:20px}
+.badge-chip .b-info{display:flex;flex-direction:column}
+.badge-chip .b-name{font-size:11px;font-weight:800;color:var(--text)}
+.badge-chip .b-level{font-size:10px;color:var(--muted)}
+
+.sec-label{font-family:'Baloo 2',cursive;font-size:18px;font-weight:700;color:var(--text);margin-bottom:14px}
+.topic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin-bottom:28px}
+.topic-card{border-radius:var(--radius);padding:22px 18px;cursor:pointer;color:#fff;transition:transform .15s,box-shadow .15s;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.topic-card:hover{transform:translateY(-4px);box-shadow:0 10px 32px rgba(0,0,0,.14)}
+.topic-card .t-emoji{font-size:40px;margin-bottom:10px;display:block}
+.topic-card h3{font-family:'Baloo 2',cursive;font-size:17px;font-weight:700}
+.topic-card p{font-size:12px;opacity:.82;margin-top:3px}
+.topic-card .grade-tag{position:absolute;top:12px;right:12px;background:rgba(255,255,255,.22);border-radius:100px;padding:2px 9px;font-size:10px;font-weight:800}
+.topic-card .lvl-tag{position:absolute;bottom:12px;right:12px;font-size:16px}
+.topic-card .repeat-tag{position:absolute;bottom:12px;left:18px;background:rgba(0,0,0,.3);border-radius:100px;padding:3px 10px;font-size:10px;font-weight:800}
+.tc-1{background:linear-gradient(135deg,#2563eb,#4f46e5)}
+.tc-2{background:linear-gradient(135deg,#16a34a,#0891b2)}
+.tc-3{background:linear-gradient(135deg,#dc2626,#ea580c)}
+.tc-4{background:linear-gradient(135deg,#7c3aed,#db2777)}
+.tc-5{background:linear-gradient(135deg,#0891b2,#2563eb)}
+.tc-6{background:linear-gradient(135deg,#ca8a04,#dc2626)}
+
+.activity-list{display:flex;flex-direction:column;gap:8px}
+.act-row{background:var(--card);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 1px 6px rgba(0,0,0,.05)}
+.act-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.act-info{flex:1}
+.act-info strong{font-size:13px;display:block}
+.act-info span{font-size:11px;color:var(--muted)}
+.act-pts{font-family:'Baloo 2',cursive;color:var(--sun);font-size:15px;font-weight:700}
+.act-flag{font-size:14px;margin-left:4px}
+
+/* EXERCISE */
+#exercise-screen{background:var(--bg)}
+.ex-top{background:var(--card);padding:14px 20px;display:flex;align-items:center;gap:12px;box-shadow:0 1px 8px rgba(0,0,0,.07)}
+.back-btn{background:var(--bg);border:none;border-radius:10px;padding:7px 14px;font-family:'Nunito',sans-serif;font-weight:700;font-size:14px;cursor:pointer;color:var(--text)}
+.back-btn:hover{background:var(--border)}
+.ex-title-wrap{flex:1}
+.ex-title-wrap h2{font-family:'Baloo 2',cursive;font-size:18px;font-weight:700}
+.ex-title-wrap small{font-size:12px;color:var(--muted)}
+.ex-body{padding:24px 20px;max-width:680px;margin:0 auto;width:100%}
+.prog-wrap{background:var(--border);border-radius:6px;height:7px;margin-bottom:14px}
+.prog-fill{height:100%;border-radius:6px;background:var(--blue);transition:width .4s}
+
+/* COMBO BAR */
+.combo-bar{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:14px;min-height:32px}
+.combo-flame{font-size:22px;display:none}
+.combo-flame.show{display:inline;animation:flamePop .3s ease}
+@keyframes flamePop{0%{transform:scale(0)}70%{transform:scale(1.4)}100%{transform:scale(1)}}
+.combo-text{font-family:'Baloo 2',cursive;font-size:16px;font-weight:800;color:var(--muted)}
+.combo-text.hot{color:#ea580c}
+.combo-mult{background:linear-gradient(120deg,#f59e0b,#ea580c);color:#fff;border-radius:100px;padding:3px 12px;font-family:'Baloo 2',cursive;font-size:14px;font-weight:800;display:none}
+.combo-mult.show{display:inline-block;animation:flamePop .3s ease}
+
+.q-card{background:var(--card);border-radius:var(--radius);padding:28px;box-shadow:var(--shadow);animation:slideUp .3s ease}
+@keyframes slideUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.q-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.q-num{background:var(--blue-pale);color:var(--blue);border-radius:100px;padding:4px 12px;font-size:12px;font-weight:800}
+.q-pts{font-family:'Baloo 2',cursive;color:var(--sun);font-size:17px;font-weight:700}
+.q-text{font-size:20px;font-weight:800;line-height:1.45;margin-bottom:24px;color:var(--text)}
+.opts-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt-btn{padding:14px 16px;border:2px solid var(--border);border-radius:12px;background:var(--bg);font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;cursor:pointer;text-align:left;transition:all .13s;color:var(--text)}
+.opt-btn:hover:not(:disabled){border-color:var(--blue-l);background:var(--blue-pale)}
+.opt-btn.correct{border-color:var(--green-l);background:var(--green-pale);color:var(--green)}
+.opt-btn.wrong{border-color:var(--red);background:var(--red-pale);color:var(--red)}
+.fill-row{display:flex;gap:10px}
+.fill-in{flex:1;padding:13px 16px;border:2px solid var(--border);border-radius:12px;font-family:'Nunito',sans-serif;font-size:17px;font-weight:700;color:var(--text);background:var(--bg);outline:none;transition:border-color .13s}
+.fill-in:focus{border-color:var(--blue);background:var(--blue-pale)}
+.fill-in.correct{border-color:var(--green-l);background:var(--green-pale)}
+.fill-in.wrong{border-color:var(--red);background:var(--red-pale)}
+.check-btn{padding:13px 22px;background:var(--blue);color:#fff;border:none;border-radius:12px;font-family:'Baloo 2',cursive;font-size:16px;font-weight:700;cursor:pointer;white-space:nowrap;transition:background .13s}
+.check-btn:hover{background:#1d4ed8}
+.fb-box{border-radius:12px;padding:14px 18px;font-size:15px;font-weight:700;margin-top:14px;display:none}
+.fb-box.show{display:block;animation:slideUp .2s ease}
+.fb-box.good{background:var(--green-pale);color:var(--green)}
+.fb-box.bad{background:var(--red-pale);color:var(--red)}
+.fb-box.rush{background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa}
+.next-btn{width:100%;padding:15px;background:var(--green-l);color:#fff;border:none;border-radius:12px;font-family:'Baloo 2',cursive;font-size:19px;font-weight:700;cursor:pointer;margin-top:10px;transition:background .13s;display:none}
+.next-btn.show{display:block}
+.next-btn:hover{background:var(--green)}
+
+/* OVERLAYS */
+.rush-overlay{position:fixed;inset:0;background:rgba(194,65,12,.92);z-index:500;display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:40px;text-align:center}
+.rush-overlay.show{display:flex;animation:slideUp .3s ease}
+.rush-overlay h2{font-family:'Baloo 2',cursive;font-size:32px;font-weight:800;color:#fff}
+.rush-overlay p{color:rgba(255,255,255,.85);font-size:16px;max-width:400px;line-height:1.6}
+.rush-ok-btn{padding:14px 40px;background:#fff;color:#c2410c;border:none;border-radius:100px;font-family:'Baloo 2',cursive;font-size:20px;font-weight:800;cursor:pointer}
+
+.cheat-overlay{position:fixed;inset:0;background:rgba(15,23,42,.97);z-index:600;display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:40px;text-align:center}
+.cheat-overlay.show{display:flex;animation:slideUp .25s ease}
+.cheat-overlay h2{font-family:'Baloo 2',cursive;font-size:30px;font-weight:800;color:#f87171}
+.cheat-overlay p{color:#94a3b8;font-size:15px;max-width:380px;line-height:1.6}
+.cheat-count{font-family:'Baloo 2',cursive;font-size:48px;font-weight:800;color:#f87171}
+.cheat-ok-btn{padding:14px 40px;background:#2563eb;color:#fff;border:none;border-radius:100px;font-family:'Baloo 2',cursive;font-size:18px;font-weight:800;cursor:pointer}
+
+/* FINISH */
+.finish-card{background:var(--card);border-radius:var(--radius);padding:40px 28px;text-align:center;box-shadow:var(--shadow);animation:slideUp .4s ease}
+.finish-emoji{font-size:72px;margin-bottom:12px}
+.finish-card h2{font-family:'Baloo 2',cursive;font-size:30px;font-weight:800}
+.finish-card p{color:var(--muted);font-size:15px;margin-top:4px}
+.score-big{font-family:'Baloo 2',cursive;font-size:52px;font-weight:800;color:var(--sun);margin:16px 0 6px}
+.score-pct{font-size:18px;font-weight:700;margin-bottom:12px}
+.info-pill{border-radius:10px;padding:10px 16px;font-size:13px;font-weight:700;margin-bottom:10px}
+.finish-btns{display:flex;gap:10px;margin-top:14px}
+.finish-btns button{flex:1;padding:13px;border:none;border-radius:12px;font-family:'Baloo 2',cursive;font-size:17px;font-weight:700;cursor:pointer;transition:opacity .13s}
+.finish-btns button:hover{opacity:.85}
+.fb-again{background:var(--blue);color:#fff}
+.fb-home{background:var(--bg);color:var(--text)}
+.redo-btn{background:linear-gradient(120deg,#dc2626,#ea580c);color:#fff;animation:pulse 1.5s ease-in-out infinite}
+
+/* PARENT */
+#parent-screen{background:#0f172a}
+.p-login{display:flex;align-items:center;justify-content:center;flex:1;padding:40px 20px}
+.p-login-box{background:#1e293b;border-radius:var(--radius);padding:40px;width:100%;max-width:400px;box-shadow:0 8px 40px rgba(0,0,0,.4)}
+.p-login-box h2{font-family:'Baloo 2',cursive;font-size:26px;font-weight:800;color:#fff;margin-bottom:4px}
+.p-login-box p{color:#94a3b8;font-size:13px;margin-bottom:24px}
+.p-login-btn{width:100%;padding:13px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-family:'Baloo 2',cursive;font-size:18px;font-weight:700;cursor:pointer;margin-top:10px}
+.p-login-btn:hover{background:#1d4ed8}
+.p-err{color:#f43f5e;font-size:12px;margin-top:6px;display:none}
+#p-dash{display:none;flex-direction:column;flex:1}
+.p-top{background:#1e293b;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+.p-top h1{font-family:'Baloo 2',cursive;color:#fff;font-size:20px;font-weight:800}
+.logout-btn{background:#334155;color:#94a3b8;border:none;border-radius:8px;padding:7px 14px;cursor:pointer;font-size:12px;font-family:'Nunito',sans-serif;font-weight:700}
+.logout-btn:hover{background:#475569;color:#fff}
+.p-body{padding:24px;max-width:900px;margin:0 auto;width:100%;display:flex;flex-direction:column;gap:20px}
+.d-card{background:#1e293b;border-radius:var(--radius);padding:22px;box-shadow:0 4px 20px rgba(0,0,0,.3)}
+.d-card h3{color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:16px}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat-box{background:#0f172a;border-radius:12px;padding:18px;text-align:center}
+.stat-box .n{font-family:'Baloo 2',cursive;font-size:30px;font-weight:800;color:var(--blue-l)}
+.stat-box .l{font-size:11px;color:#475569;margin-top:2px}
+.topic-perf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.tp-box{background:#0f172a;border-radius:12px;padding:14px 16px}
+.tp-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.tp-name{color:#e2e8f0;font-size:13px;font-weight:700}
+.tp-badge{font-size:14px}
+.tp-bar-bg{background:#1e293b;border-radius:6px;height:8px}
+.tp-bar-fill{height:100%;border-radius:6px;transition:width .5s}
+.tp-meta{display:flex;justify-content:space-between;margin-top:5px}
+.tp-meta span{font-size:11px;color:#64748b}
+.hist-list{display:flex;flex-direction:column;gap:8px}
+.h-row{background:#0f172a;border-radius:10px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.h-row .hl strong{color:#e2e8f0;font-size:13px}
+.h-row .hl span{color:#64748b;font-size:11px;display:block}
+.h-score{font-family:'Baloo 2',cursive;font-size:17px;font-weight:700}
+.hs-high{color:#4ade80} .hs-mid{color:var(--sun)} .hs-low{color:#f87171}
+.h-flag{margin-left:6px;font-size:13px}
+.rush-alert{background:#431407;border:1.5px solid #c2410c;border-radius:12px;padding:14px 18px;color:#fed7aa;font-size:13px;font-weight:700;display:none;margin-bottom:10px}
+.rush-alert.show{display:block}
+.rf-row{display:flex;align-items:center;gap:12px}
+.rf-row label{color:#94a3b8;font-size:13px;width:150px;flex-shrink:0}
+.rf-row input{flex:1;padding:10px 13px;background:#0f172a;border:2px solid #334155;border-radius:9px;color:#fff;font-family:'Nunito',sans-serif;font-size:14px;outline:none}
+.rf-row input:focus{border-color:var(--blue-l)}
+.reward-form{display:flex;flex-direction:column;gap:12px}
+.save-btn{padding:11px 22px;background:#16a34a;color:#fff;border:none;border-radius:9px;font-family:'Baloo 2',cursive;font-size:15px;font-weight:700;cursor:pointer;align-self:flex-start}
+.save-btn:hover{background:#15803d}
+.save-ok{color:#4ade80;font-size:12px;display:none}
+.danger-btn{padding:9px 18px;background:#334155;color:#94a3b8;border:none;border-radius:9px;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;cursor:pointer;margin-top:4px;align-self:flex-start}
+.danger-btn:hover{background:#dc2626;color:#fff}
+
+#confetti-wrap{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1000;display:none}
+#confetti-wrap.on{display:block}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="home" class="screen active">
+  <div class="home-rocket">🗺️</div>
+  <div class="home-title"><em>Thomas's</em><br>Math Quest</div>
+  <div class="home-sub">Complete missions · Build combos · Earn rewards</div>
+  <div class="super-dad-badge">🦸 Supervised by Super Dad Vagner</div>
+  <div class="home-btns">
+    <button class="btn-primary" onclick="showScreen('kid-hub')">▶ Start Quest!</button>
+    <button class="btn-secondary" onclick="showScreen('parent-screen')">🔒 Parent Dashboard</button>
+  </div>
+</div>
+
+<!-- KID HUB -->
+<div id="kid-hub" class="screen">
+  <div class="top-bar">
+    <h1>🗺️ Math Quest</h1>
+    <div class="top-bar-right">
+      <div class="streak-pill"><span>🔥</span><strong id="streak-count">0</strong></div>
+      <div class="stars-pill"><span>⭐</span><strong id="star-count">0</strong></div>
+    </div>
+  </div>
+  <div class="xp-wrap"><div class="xp-fill" id="xp-bar" style="width:0%"></div></div>
+
+  <div class="kid-body">
+
+    <div class="cap-banner active" id="cap-banner">
+      <span id="cap-label">⭐ Today:</span>
+      <div class="cap-bar-wrap"><div class="cap-bar-fill" id="cap-bar" style="width:0%"></div></div>
+      <span id="cap-right" style="font-size:12px;white-space:nowrap"></span>
+    </div>
+
+    <!-- DAILY MISSIONS -->
+    <div class="missions-card">
+      <div class="missions-head">
+        <h3>🎯 Today's Missions</h3>
+        <div class="missions-bonus">All 3 = +20 ⭐ BONUS</div>
+      </div>
+      <div id="missions-list"></div>
+      <div class="missions-complete-banner" id="missions-banner">🏆 ALL MISSIONS COMPLETE! +20 bonus stars earned!</div>
+    </div>
+
+    <div class="reward-strip" id="reward-strip">
+      <div class="reward-top">
+        <div>
+          <h3>🎁 Reward Goal</h3>
+          <div class="reward-name-big" id="reward-name">Keep going!</div>
+        </div>
+        <div style="text-align:right">
+          <div class="reward-nums"><span id="rew-curr">0</span>/<span id="rew-goal">80</span> ⭐</div>
+        </div>
+      </div>
+      <div class="rew-bar-wrap"><div class="rew-bar-fill" id="rew-bar" style="width:0%"></div></div>
+      <button class="claim-btn" id="claim-btn" onclick="claimReward()">🎉 Claim Your Reward!</button>
+    </div>
+
+    <div class="badges-wrap">
+      <div class="sec-label">🏅 Your Badges</div>
+      <div class="badges-scroll" id="badges-row"></div>
+    </div>
+
+    <div class="sec-label">📚 All Topics</div>
+    <div class="topic-grid" id="topic-grid"></div>
+
+    <div class="sec-label">📝 Recent Activity</div>
+    <div class="activity-list" id="activity-list"></div>
+  </div>
+</div>
+
+<!-- EXERCISE -->
+<div id="exercise-screen" class="screen">
+  <div class="ex-top">
+    <button class="back-btn" onclick="goBack()">← Back</button>
+    <div class="ex-title-wrap">
+      <h2 id="ex-title">Topic</h2>
+      <small id="ex-grade-tag"></small>
+    </div>
+    <div class="stars-pill" style="background:#f1f5f9"><span>⭐</span><strong id="ex-stars" style="color:#0f172a">0</strong></div>
+  </div>
+  <div class="ex-body">
+    <div class="prog-wrap"><div class="prog-fill" id="q-prog" style="width:0%"></div></div>
+    <div class="combo-bar">
+      <span class="combo-flame" id="combo-flame">🔥</span>
+      <span class="combo-text" id="combo-text">Answer correctly to start a combo!</span>
+      <span class="combo-mult" id="combo-mult">x1.5</span>
+    </div>
+    <div id="q-container"></div>
+    <div class="fb-box" id="fb-box"></div>
+    <button class="next-btn" id="next-btn" onclick="nextQ()">Next →</button>
+  </div>
+</div>
+
+<!-- RUSH WARNING -->
+<div class="rush-overlay" id="rush-overlay">
+  <div style="font-size:64px">🐢</div>
+  <h2>Slow down, Thomas!</h2>
+  <p>You're answering too fast — that means you might be guessing instead of thinking.<br><br>Take a deep breath. Read carefully. You've got this! 💪</p>
+  <button class="rush-ok-btn" onclick="dismissRush()">OK, I'll slow down!</button>
+</div>
+
+<!-- CHEAT BLOCK -->
+<div class="cheat-overlay" id="cheat-overlay">
+  <div style="font-size:64px">🚫</div>
+  <h2>Hey! Where did you go?</h2>
+  <p>You switched away from the quiz. No calculators or outside help — your brain is the only tool you need! 💪</p>
+  <div class="cheat-count" id="cheat-count">0</div>
+  <p style="font-size:13px;color:#64748b">tab switches detected this session<br>Super Dad Vagner can see this in the dashboard.</p>
+  <button class="cheat-ok-btn" onclick="dismissCheat()">I understand — back to work!</button>
+</div>
+
+<!-- PARENT -->
+<div id="parent-screen" class="screen">
+  <div class="p-login" id="p-login-form">
+    <div class="p-login-box">
+      <h2>🔒 Parent Dashboard</h2>
+      <p>Super Dad Vagner — enter your PIN to see Thomas's progress.</p>
+      <div style="position:relative">
+        <input type="password" id="pin-input" placeholder="Enter PIN" maxlength="6" autocomplete="off"
+          onkeydown="if(event.key==='Enter') checkPin()"
+          style="width:100%;padding:13px 48px 13px 16px;border-radius:10px;border:2px solid #334155;background:#0f172a;color:#fff;font-family:'Nunito',sans-serif;font-size:20px;letter-spacing:6px;outline:none">
+        <button onclick="togglePin()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:18px;color:#64748b">👁️</button>
+      </div>
+      <button class="p-login-btn" onclick="checkPin()">Enter →</button>
+      <div class="p-err" id="p-err">❌ Wrong PIN. Try again.</div>
+      <div style="margin-top:16px;text-align:center">
+        <button style="background:none;border:none;color:#475569;cursor:pointer;font-size:13px" onclick="showScreen('home')">← Back to Home</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="p-dash">
+    <div class="p-top">
+      <h1>🦸 Super Dad Vagner — Thomas's Progress</h1>
+      <button class="logout-btn" onclick="logoutParent()">Logout</button>
+    </div>
+    <div class="p-body">
+      <div class="d-card">
+        <h3>Overview</h3>
+        <div class="stats-row">
+          <div class="stat-box"><div class="n" id="d-stars">0</div><div class="l">Total Stars</div></div>
+          <div class="stat-box"><div class="n" id="d-quizzes">0</div><div class="l">Quizzes Done</div></div>
+          <div class="stat-box"><div class="n" id="d-avg">—</div><div class="l">Avg Score</div></div>
+          <div class="stat-box"><div class="n" id="d-streak">0</div><div class="l">Day Streak 🔥</div></div>
+        </div>
+      </div>
+
+      <div class="d-card">
+        <h3>⚠️ Rushing / Cheating / Redo Alerts</h3>
+        <div class="rush-alert" id="d-rush-alert"></div>
+        <div class="hist-list" id="d-rush-hist"></div>
+      </div>
+
+      <div class="d-card">
+        <h3>Performance by Topic</h3>
+        <div class="topic-perf-grid" id="d-topic-perf"></div>
+      </div>
+
+      <div class="d-card">
+        <h3>Quiz History (Last 15)</h3>
+        <div class="hist-list" id="d-hist"></div>
+      </div>
+
+      <div class="d-card">
+        <h3>📋 Progress Report — Copy &amp; Email</h3>
+        <p style="color:#94a3b8;font-size:13px;margin-bottom:14px">Copy and paste into an email to <strong style="color:#e2e8f0">vagnerpilar@hotmail.com</strong> / <strong style="color:#e2e8f0">gracispilar@gmail.com</strong></p>
+        <textarea id="report-text" readonly style="width:100%;height:260px;background:#0f172a;color:#94a3b8;border:2px solid #334155;border-radius:10px;padding:14px;font-family:'Courier New',monospace;font-size:12px;line-height:1.6;resize:none;outline:none"></textarea>
+        <button onclick="copyReport()" style="margin-top:10px;padding:11px 22px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-family:'Baloo 2',cursive;font-size:15px;font-weight:700;cursor:pointer">📋 Copy to Clipboard</button>
+        <span id="copy-confirm" style="margin-left:12px;color:#4ade80;font-size:13px;display:none">✓ Copied!</span>
+      </div>
+
+      <div class="d-card">
+        <h3>Reward Settings</h3>
+        <div class="reward-form">
+          <div class="rf-row"><label>Stars needed</label><input type="number" id="d-goal" placeholder="80" min="1" max="9999"></div>
+          <div class="rf-row"><label>Reward description</label><input type="text" id="d-reward-name" placeholder="e.g. Pizza night 🍕"></div>
+          <button class="save-btn" onclick="saveReward()">💾 Save Reward</button>
+          <div class="save-ok" id="save-ok">✓ Saved!</div>
+          <button class="danger-btn" onclick="resetAll()">🗑️ Reset All Progress</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="confetti-wrap"><canvas id="c-canvas"></canvas></div>
+
+<script>
+// ═══════════════════════════
+// CONSTANTS
+// ═══════════════════════════
+const DAILY_CAP = 80;
+const RUSH_THRESHOLD_MS = 5000;
+const RUSH_TRIGGER_COUNT = 3;
+const PASS_THRESHOLD = 50;        // below 50% = no stars, redo required
+const MISSION_BONUS = 20;
+const QS_PER_SESSION = 6;
+const REPEAT_MULTS = [1, 0.5, 0.25]; // 1st, 2nd, 3rd+ play of same topic per day
+const LEVELS = [
+  { min:0,  label:'Not started', emoji:'⬜' },
+  { min:1,  label:'Beginner 🌱', emoji:'🌱' },
+  { min:60, label:'Good 🌟',     emoji:'🌟' },
+  { min:75, label:'Strong 🔥',   emoji:'🔥' },
+  { min:90, label:'Master 🏆',   emoji:'🏆' },
+];
+
+// ═══════════════════════════
+// STATE
+// ═══════════════════════════
+let app = {
+  stars: 0,
+  history: [],
+  topicStats: {},
+  rewardGoal: 80,
+  rewardName: 'Special reward!',
+  rewardClaimed: 0,
+  streak: 0,
+  lastPracticeDate: '',
+  dailyStars: 0,
+  dailyDate: '',
+  dailyPlays: {},        // { topic: count } resets daily
+  missions: { date:'', topics:[], done:[] },
+  missionBonusGiven: '',
+};
+
+function load(){
+  const v4 = localStorage.getItem('thomas_math_v4');
+  if(v4){ app = Object.assign(app, JSON.parse(v4)); return; }
+  const v3 = localStorage.getItem('thomas_math_v3');
+  if(v3){ app = Object.assign(app, JSON.parse(v3)); save(); }
+}
+function save(){ localStorage.setItem('thomas_math_v4', JSON.stringify(app)); }
+load();
+
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+
+function checkDailyReset(){
+  const today = todayStr();
+  if(app.dailyDate !== today){
+    app.dailyStars = 0;
+    app.dailyDate = today;
+    app.dailyPlays = {};
+    save();
+  }
+  // Generate today's missions deterministically from the date
+  if(app.missions.date !== today){
+    const topics = Object.keys(QB);
+    // seeded shuffle from date string
+    let seed = 0;
+    for(const c of today) seed = (seed*31 + c.charCodeAt(0)) >>> 0;
+    const shuffled = [...topics];
+    for(let i=shuffled.length-1;i>0;i--){
+      seed = (seed*1103515245 + 12345) >>> 0;
+      const j = seed % (i+1);
+      [shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]];
+    }
+    app.missions = { date: today, topics: shuffled.slice(0,3), done: [] };
+    save();
+  }
+}
+
+function updateStreak(){
+  const today = todayStr();
+  if(app.lastPracticeDate === today) return;
+  const y = new Date(); y.setDate(y.getDate()-1);
+  const yStr = y.toISOString().slice(0,10);
+  if(app.lastPracticeDate === yStr) app.streak = (app.streak||0)+1;
+  else app.streak = 1;
+  app.lastPracticeDate = today;
+  save();
+}
+
+function getLevel(avg){
+  if(avg===null||avg===undefined) return LEVELS[0];
+  for(let i=LEVELS.length-1;i>=0;i--) if(avg>=LEVELS[i].min) return LEVELS[i];
+  return LEVELS[0];
+}
+function topicAvg(t){
+  const s = app.topicStats[t];
+  if(!s||!s.attempts) return null;
+  return Math.round(s.totalPct/s.attempts);
+}
+
+// ═══════════════════════════
+// NAVIGATION
+// ═══════════════════════════
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if(id==='kid-hub'){ checkDailyReset(); refreshHub(); }
+  if(id==='exercise-screen'){ setTimeout(()=>{ cheatBlocked=false; },500); }
+  if(id==='parent-screen'){ cheatBlocked=true; }
+}
+function goBack(){ quizActive=false; showScreen('kid-hub'); }
+
+// ═══════════════════════════
+// QUESTION BANK (comma-free, verified)
+// ═══════════════════════════
+const QB = {
+  addition:{name:'Addition & Subtraction',grade:'3rd Grade Review',emoji:'➕',cls:'tc-1',color:'#3b82f6',questions:[
+    {type:'mc',q:'What is 347 + 256?',opts:['503','593','603','613'],ans:2,pts:10},
+    {type:'mc',q:'What is 1500 minus 567?',opts:['933','943','843','923'],ans:0,pts:10},
+    {type:'fill',q:'825 + 139 = ___',ans:'964',pts:10},
+    {type:'mc',q:'What is 2500 minus 1348?',opts:['1042','1152','1162','952'],ans:1,pts:15},
+    {type:'fill',q:'1000 minus 437 = ___',ans:'563',pts:10},
+    {type:'mc',q:'Sam has 456 stickers. He gets 278 more. How many now?',opts:['624','724','734','744'],ans:2,pts:15},
+    {type:'mc',q:'Missing number: 583 + ___ = 900',opts:['217','317','327','307'],ans:1,pts:15},
+    {type:'fill',q:'3456 + 2311 = ___',ans:'5767',pts:10},
+    {type:'mc',q:'What is 4000 minus 2756?',opts:['1144','1244','1354','2244'],ans:1,pts:15},
+    {type:'mc',q:'Eva scored 325 on Monday and 487 on Tuesday. Total?',opts:['702','812','802','822'],ans:1,pts:15},
+  ]},
+  multiplication:{name:'Multiplication',grade:'3rd Grade Review',emoji:'✖️',cls:'tc-2',color:'#22c55e',questions:[
+    {type:'mc',q:'What is 6 times 7?',opts:['36','42','48','56'],ans:1,pts:10},
+    {type:'fill',q:'8 times 9 = ___',ans:'72',pts:10},
+    {type:'mc',q:'What is 4 times 12?',opts:['44','46','48','52'],ans:2,pts:10},
+    {type:'mc',q:'6 rows of 8 apples. Total?',opts:['42','48','54','56'],ans:1,pts:15},
+    {type:'mc',q:'What is 9 times 9?',opts:['72','81','90','63'],ans:1,pts:10},
+    {type:'fill',q:'7 times 8 = ___',ans:'56',pts:10},
+    {type:'mc',q:'6 times ___ = 54',opts:['7','8','9','10'],ans:2,pts:15},
+    {type:'mc',q:'What is 11 times 7?',opts:['70','77','74','84'],ans:1,pts:10},
+    {type:'fill',q:'12 times 6 = ___',ans:'72',pts:10},
+    {type:'mc',q:'5 bags with 12 oranges each. Total?',opts:['50','55','60','65'],ans:2,pts:15},
+  ]},
+  division:{name:'Division',grade:'3rd Grade Review',emoji:'➗',cls:'tc-3',color:'#f87171',questions:[
+    {type:'mc',q:'What is 36 divided by 6?',opts:['4','5','6','7'],ans:2,pts:10},
+    {type:'fill',q:'72 divided by 8 = ___',ans:'9',pts:10},
+    {type:'mc',q:'What is 45 divided by 9?',opts:['4','5','6','7'],ans:1,pts:10},
+    {type:'mc',q:'24 cookies shared by 4 kids. Each gets?',opts:['4','5','6','8'],ans:2,pts:15},
+    {type:'mc',q:'What is 63 divided by 7?',opts:['7','8','9','10'],ans:2,pts:10},
+    {type:'fill',q:'56 divided by 7 = ___',ans:'8',pts:10},
+    {type:'mc',q:'17 divided by 5 — what is the remainder?',opts:['0','1','2','3'],ans:2,pts:15},
+    {type:'mc',q:'What is 100 divided by 10?',opts:['5','10','15','20'],ans:1,pts:10},
+    {type:'fill',q:'81 divided by 9 = ___',ans:'9',pts:10},
+    {type:'mc',q:'50 divided by 6. Whole number answer only.',opts:['6','7','8','9'],ans:2,pts:15},
+  ]},
+  fractions:{name:'Fractions',grade:'3rd to 4th Grade',emoji:'🍕',cls:'tc-4',color:'#a78bfa',questions:[
+    {type:'mc',q:'Which fraction is the largest?',opts:['1/4','1/2','1/3','1/8'],ans:1,pts:10},
+    {type:'mc',q:'1/4 + 2/4 = ?',opts:['3/4','3/8','2/8','1/2'],ans:0,pts:10},
+    {type:'mc',q:'Pizza cut in 8 slices. Tom eats 3. Fraction eaten?',opts:['3/5','5/8','3/8','1/3'],ans:2,pts:15},
+    {type:'fill',q:'3 days out of a week = ___ out of 7',ans:'3/7',pts:15},
+    {type:'mc',q:'Which fraction equals 1/2?',opts:['2/6','2/4','3/8','4/10'],ans:1,pts:15},
+    {type:'mc',q:'5/6 minus 2/6 = ?',opts:['3/6','3/12','2/6','1/6'],ans:0,pts:10},
+    {type:'mc',q:'Order smallest to largest:  3/4   1/4   2/4',opts:['1/4  2/4  3/4','3/4  2/4  1/4','2/4  1/4  3/4','1/4  3/4  2/4'],ans:0,pts:10},
+    {type:'mc',q:'Which is less than 1/2?',opts:['3/4','4/6','2/8','3/5'],ans:2,pts:15},
+    {type:'fill',q:'1/3 + 1/3 = ___',ans:'2/3',pts:10},
+    {type:'mc',q:'Ribbon 3/4 m plus ribbon 1/4 m. Total?',opts:['4/8 m','1 m','2 m','4/4 m'],ans:1,pts:15},
+  ]},
+  place_value:{name:'Place Value',grade:'4th Grade Intro',emoji:'🔟',cls:'tc-5',color:'#38bdf8',questions:[
+    {type:'mc',q:'What is the value of digit 6 in 46382?',opts:['6','60','600','6000'],ans:3,pts:10},
+    {type:'mc',q:'What is 10000 more than 34500?',opts:['35500','44500','34600','34510'],ans:1,pts:10},
+    {type:'fill',q:'In 258430 the digit 5 is in the ten-_____ place',ans:'thousands',pts:15},
+    {type:'mc',q:'Round 4672 to the nearest hundred',opts:['4600','4700','4670','5000'],ans:1,pts:10},
+    {type:'mc',q:'What is 100000 more than 356000?',opts:['357000','366000','456000','346000'],ans:2,pts:15},
+    {type:'mc',q:'3 thousands + 7 hundreds + 0 tens + 5 ones = ?',opts:['3705','3075','3750','3507'],ans:0,pts:15},
+    {type:'fill',q:'Round 73418 to the nearest thousand = ___',ans:'73000',pts:15},
+    {type:'mc',q:'Which number is greatest?  89001   90001   89100   88999',opts:['89001','90001','89100','88999'],ans:1,pts:10},
+    {type:'mc',q:'What is the place value of 4 in 2400000?',opts:['Thousands','Ten-thousands','Hundred-thousands','Millions'],ans:2,pts:15},
+    {type:'mc',q:'Expanded form of 5306?',opts:['5000+300+6','5000+30+6','500+300+6','5000+300+60'],ans:0,pts:10},
+  ]},
+  word_problems:{name:'Word Problems',grade:'4th Grade Intro',emoji:'📝',cls:'tc-6',color:'#fb923c',questions:[
+    {type:'mc',q:'24 classrooms with 28 students each. Total students?',opts:['572','632','672','652'],ans:2,pts:15},
+    {type:'mc',q:'Saved 135 + 248 + 97 dollars. Total?',opts:['470','480','490','460'],ans:1,pts:15},
+    {type:'mc',q:'96 eggs packed in boxes of 8. How many boxes?',opts:['10','11','12','13'],ans:2,pts:15},
+    {type:'fill',q:'7 shelves with 45 books each. Total books = ___',ans:'315',pts:15},
+    {type:'mc',q:'3/4 mile per day for 4 days. Total miles?',opts:['3 miles','1 mile','2 miles','4 miles'],ans:0,pts:15},
+    {type:'mc',q:'Rectangle 16 cm long and 9 cm wide. What is the perimeter?',opts:['25 cm','50 cm','144 cm','72 cm'],ans:1,pts:15},
+    {type:'mc',q:'Tom had 1250 cards and gave away 378. How many left?',opts:['872','882','962','972'],ans:0,pts:15},
+    {type:'fill',q:'8 dollars per ticket times 23 tickets = ___',ans:'184',pts:15},
+    {type:'mc',q:'5 friends share 95 grapes equally. Each gets?',opts:['17','18','19','20'],ans:2,pts:15},
+    {type:'mc',q:'A book has 126 pages. Julia reads 9 pages per day. How many days to finish?',opts:['12','13','14','15'],ans:2,pts:15},
+  ]},
+};
+
+// ═══════════════════════════
+// CHEAT DETECTION
+// ═══════════════════════════
+let cheatCount = 0;
+let quizActive = false;
+let cheatBlocked = false;
+
+window.addEventListener('blur', ()=>{
+  if(!quizActive || cheatBlocked) return;
+  cheatCount++;
+  document.getElementById('cheat-count').textContent = cheatCount;
+  document.getElementById('cheat-overlay').classList.add('show');
+});
+document.addEventListener('contextmenu', e=>{
+  if(quizActive){ e.preventDefault(); }
+});
+document.addEventListener('keydown', e=>{
+  if(!quizActive) return;
+  const blocked = (e.key==='F12') ||
+    (e.ctrlKey && ['u','U','s','S','a','A','c','C','p','P'].includes(e.key)) ||
+    (e.metaKey && ['u','s','a','c','p'].includes(e.key.toLowerCase()));
+  if(blocked){ e.preventDefault(); }
+});
+function dismissCheat(){ document.getElementById('cheat-overlay').classList.remove('show'); }
+function resetCheatCount(){ cheatCount=0; document.getElementById('cheat-count').textContent=0; }
+
+// ═══════════════════════════
+// QUIZ ENGINE
+// ═══════════════════════════
+let curTopic='', curQs=[], curIdx=0;
+let sesStarsEarned=0;       // stars added to app.stars this session (for rollback)
+let sesDisplayStars=0;      // what we show
+let sesCorrect=0, answered=false;
+let qStartTime=0, rushCount=0, rushWarned=false, sesRushFlags=[];
+let combo=0;                // consecutive correct
+let isRedo=false;
+
+function comboMult(){
+  if(combo>=5) return 2;
+  if(combo>=3) return 1.5;
+  return 1;
+}
+function repeatMult(){
+  const plays = app.dailyPlays[curTopic]||0;
+  return REPEAT_MULTS[Math.min(plays, REPEAT_MULTS.length-1)];
+}
+
+function startTopic(t, redo){
+  checkDailyReset();
+  quizActive=true; resetCheatCount();
+  curTopic=t; answered=false; rushCount=0; rushWarned=false; sesRushFlags=[];
+  sesStarsEarned=0; sesDisplayStars=0; sesCorrect=0; combo=0;
+  isRedo = !!redo;
+  const pool=[...QB[t].questions];
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+  curQs=pool.slice(0,QS_PER_SESSION); curIdx=0;
+  document.getElementById('ex-title').textContent=QB[t].name + (isRedo?' — REDO CHALLENGE 🔁':'');
+  document.getElementById('ex-grade-tag').textContent=QB[t].grade;
+  document.getElementById('ex-stars').textContent=app.stars;
+  showScreen('exercise-screen');
+  updateComboUI();
+  renderQ();
+}
+
+function updateComboUI(){
+  const flame=document.getElementById('combo-flame');
+  const text=document.getElementById('combo-text');
+  const mult=document.getElementById('combo-mult');
+  if(combo>=5){
+    flame.className='combo-flame show'; flame.textContent='🔥🔥';
+    text.textContent='ON FIRE! '+combo+' in a row!'; text.className='combo-text hot';
+    mult.textContent='x2 STARS'; mult.className='combo-mult show';
+  } else if(combo>=3){
+    flame.className='combo-flame show'; flame.textContent='🔥';
+    text.textContent='Combo! '+combo+' in a row!'; text.className='combo-text hot';
+    mult.textContent='x1.5 STARS'; mult.className='combo-mult show';
+  } else if(combo>0){
+    flame.className='combo-flame';
+    text.textContent=combo+' correct — get 3 in a row for a combo!'; text.className='combo-text';
+    mult.className='combo-mult';
+  } else {
+    flame.className='combo-flame';
+    text.textContent='Answer correctly to start a combo!'; text.className='combo-text';
+    mult.className='combo-mult';
+  }
+}
+
+function renderQ(){
+  if(curIdx>=curQs.length){ showFinish(); return; }
+  answered=false;
+  qStartTime=Date.now();
+  const q=curQs[curIdx];
+  document.getElementById('q-prog').style.width=(curIdx/curQs.length)*100+'%';
+  document.getElementById('fb-box').className='fb-box';
+  document.getElementById('next-btn').className='next-btn';
+  const effPts=Math.round(q.pts*comboMult()*repeatMult());
+  let html=`<div class="q-card"><div class="q-header"><span class="q-num">Q${curIdx+1} of ${curQs.length}</span><span class="q-pts">⭐ +${effPts}</span></div><div class="q-text">${q.q}</div>`;
+  if(q.type==='mc'){
+    html+=`<div class="opts-grid">`;
+    q.opts.forEach((o,i)=>{html+=`<button class="opt-btn" id="opt${i}" onclick="pickOpt(${i})">${o}</button>`;});
+    html+=`</div>`;
+  } else {
+    html+=`<div class="fill-row"><input class="fill-in" id="fill-in" type="text" placeholder="Type your answer…" onkeydown="if(event.key==='Enter')checkFill()"><button class="check-btn" onclick="checkFill()">Check ✓</button></div>`;
+  }
+  html+=`</div>`;
+  document.getElementById('q-container').innerHTML=html;
+  if(q.type==='fill') setTimeout(()=>{ const el=document.getElementById('fill-in'); if(el)el.focus(); },100);
+}
+
+function checkRush(){
+  const elapsed=Date.now()-qStartTime;
+  if(elapsed < RUSH_THRESHOLD_MS){
+    rushCount++;
+    sesRushFlags.push(curIdx+1);
+    if(rushCount >= RUSH_TRIGGER_COUNT && !rushWarned){
+      rushWarned=true;
+      setTimeout(()=>document.getElementById('rush-overlay').classList.add('show'),400);
+    }
+    return true;
+  }
+  return false;
+}
+function dismissRush(){ document.getElementById('rush-overlay').classList.remove('show'); }
+
+function addStars(pts){
+  checkDailyReset();
+  const remaining=Math.max(0, DAILY_CAP - app.dailyStars);
+  const earned=Math.min(pts, remaining);
+  app.stars+=earned; app.dailyStars+=earned;
+  save();
+  return earned;
+}
+function removeStars(pts){
+  app.stars=Math.max(0, app.stars-pts);
+  app.dailyStars=Math.max(0, app.dailyStars-pts);
+  save();
+}
+
+function pickOpt(i){
+  if(answered) return;
+  answered=true;
+  const q=curQs[curIdx], ok=q.ans===i;
+  const rushed=checkRush();
+  q.opts.forEach((_,x)=>{
+    const b=document.getElementById('opt'+x); b.disabled=true;
+    if(x===q.ans) b.classList.add('correct');
+    else if(x===i&&!ok) b.classList.add('wrong');
+  });
+  handleResult(ok,q,q.opts[q.ans],rushed);
+}
+function checkFill(){
+  if(answered) return;
+  const inp=document.getElementById('fill-in');
+  const val=inp.value.trim().toLowerCase().replace(/,/g,'').replace(/\s+/g,'');
+  const q=curQs[curIdx];
+  const ca=q.ans.toLowerCase().replace(/,/g,'').replace(/\s+/g,'');
+  const ok=val===ca;
+  const rushed=checkRush();
+  answered=true; inp.disabled=true;
+  inp.className='fill-in '+(ok?'correct':'wrong');
+  handleResult(ok,q,q.ans,rushed);
+}
+
+function handleResult(ok,q,correctAns,rushed){
+  const fb=document.getElementById('fb-box');
+  if(ok){
+    sesCorrect++;
+    combo++;
+    const effPts=Math.round(q.pts*comboMult()*repeatMult());
+    const earned=addStars(effPts);
+    sesStarsEarned+=earned;
+    sesDisplayStars+=earned;
+    const capFull=app.dailyStars>=DAILY_CAP;
+    if(rushed){
+      fb.textContent='✅ Correct, but under 5 seconds — are you really thinking? ⚡';
+      fb.className='fb-box rush show';
+    } else if(capFull && earned===0){
+      fb.textContent='✅ Correct! Daily 80 ⭐ limit reached — practice still counts for missions!';
+      fb.className='fb-box good show';
+    } else {
+      const comboTxt = comboMult()>1 ? ' 🔥 COMBO x'+comboMult()+'!' : '';
+      const msgs=['🎉 Correct! +'+earned+' ⭐'+comboTxt,'⭐ Nice! +'+earned+comboTxt,'💡 Smart! +'+earned+' ⭐'+comboTxt];
+      fb.textContent=msgs[Math.floor(Math.random()*msgs.length)];
+      fb.className='fb-box good show';
+    }
+  } else {
+    combo=0;
+    fb.textContent='❌ Not quite. Answer: '+correctAns+' — combo reset! Try to understand why.';
+    fb.className='fb-box bad show';
+  }
+  updateComboUI();
+  document.getElementById('next-btn').className='next-btn show';
+  document.getElementById('ex-stars').textContent=app.stars;
+}
+
+function nextQ(){ curIdx++; renderQ(); }
+
+function showFinish(){
+  quizActive=false;
+  updateStreak();
+  const pct=Math.round((sesCorrect/curQs.length)*100);
+  const wasRushed=sesRushFlags.length>=RUSH_TRIGGER_COUNT;
+  const failed=pct<PASS_THRESHOLD;
+
+  // FAILED: remove the stars earned this session, require redo
+  if(failed && sesStarsEarned>0){
+    removeStars(sesStarsEarned);
+    sesDisplayStars=0;
+  }
+  // RUSHED (but passed): halve stars
+  let finalStars=sesDisplayStars;
+  if(!failed && wasRushed && sesStarsEarned>0){
+    const penalty=Math.floor(sesStarsEarned*0.5);
+    removeStars(penalty);
+    finalStars=sesStarsEarned-penalty;
+  }
+
+  // Record stats
+  if(!app.topicStats[curTopic]) app.topicStats[curTopic]={attempts:0,totalPct:0,rushFlags:0,redos:0};
+  app.topicStats[curTopic].attempts++;
+  app.topicStats[curTopic].totalPct+=pct;
+  if(wasRushed) app.topicStats[curTopic].rushFlags=(app.topicStats[curTopic].rushFlags||0)+1;
+  if(failed) app.topicStats[curTopic].redos=(app.topicStats[curTopic].redos||0)+1;
+
+  // Daily plays (for diminishing returns) — only count if passed
+  if(!failed){
+    app.dailyPlays[curTopic]=(app.dailyPlays[curTopic]||0)+1;
+  }
+
+  // Missions
+  let missionDone=false, allMissionsDone=false;
+  if(!failed && app.missions.topics.includes(curTopic) && !app.missions.done.includes(curTopic)){
+    app.missions.done.push(curTopic);
+    missionDone=true;
+    if(app.missions.done.length===3 && app.missionBonusGiven!==todayStr()){
+      app.missionBonusGiven=todayStr();
+      const bonus=addStars(MISSION_BONUS);
+      finalStars+=bonus;
+      allMissionsDone=true;
+    }
+  }
+
+  app.history.unshift({
+    topic:QB[curTopic].name, score:pct, stars:failed?0:finalStars,
+    correct:sesCorrect, total:curQs.length, date:new Date().toLocaleDateString(),
+    rushed:wasRushed, rushQs:sesRushFlags, cheatSwitches:cheatCount,
+    failed:failed, redo:isRedo
+  });
+  if(app.history.length>30) app.history.pop();
+  save();
+
+  document.getElementById('q-prog').style.width='100%';
+  document.getElementById('fb-box').className='fb-box';
+  document.getElementById('next-btn').className='next-btn';
+
+  let html='';
+  if(failed){
+    html=`<div class="finish-card">
+      <div class="finish-emoji">😤</div>
+      <h2>Almost there!</h2>
+      <p>${sesCorrect} of ${curQs.length} correct — you need at least 50% to earn stars.</p>
+      <div class="score-big" style="color:var(--red)">0 ⭐</div>
+      <div class="score-pct" style="color:var(--red)">${pct}% — stars removed this round</div>
+      <div class="info-pill" style="background:var(--red-pale);color:var(--red)">🔁 Take the REDO CHALLENGE to win your stars back! Your reward progress is safe.</div>
+      <div class="finish-btns">
+        <button class="redo-btn" onclick="startTopic('${curTopic}', true)" style="flex:2">🔁 REDO CHALLENGE!</button>
+        <button class="fb-home" onclick="showScreen('kid-hub')" style="flex:1">🏠 Home</button>
+      </div>
+    </div>`;
+  } else {
+    const emoji=pct===100?'🏆':pct>=70?'🎉':'👍';
+    const msg=pct===100?'Perfect Score!':pct>=70?'Great work!':'Good job — you passed!';
+    const lvl=getLevel(topicAvg(curTopic));
+    html=`<div class="finish-card">
+      <div class="finish-emoji">${emoji}</div>
+      <h2>${isRedo?'Redo Complete! ':''}${msg}</h2>
+      <p>${sesCorrect} of ${curQs.length} correct in ${QB[curTopic].name}</p>
+      <div class="score-big">⭐ +${finalStars}</div>
+      <div class="score-pct" style="color:${pct>=70?'var(--green)':'var(--sun)'}">${pct}% score</div>
+      ${wasRushed?`<div class="info-pill" style="background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa">⚡ ${sesRushFlags.length} answers too fast (Q${sesRushFlags.join(', Q')}). Stars cut 50%.</div>`:''}
+      ${cheatCount>0?`<div class="info-pill" style="background:var(--red-pale);color:var(--red)">🚫 ${cheatCount} tab switch${cheatCount>1?'es':''} detected. Super Dad sees this.</div>`:''}
+      ${missionDone?`<div class="info-pill" style="background:var(--green-pale);color:var(--green)">🎯 MISSION COMPLETE: ${QB[curTopic].name}!</div>`:''}
+      ${allMissionsDone?`<div class="info-pill" style="background:linear-gradient(120deg,#f59e0b,#ea580c);color:#fff">🏆 ALL 3 MISSIONS DONE! +${MISSION_BONUS} BONUS STARS!</div>`:''}
+      <div class="info-pill" style="background:var(--blue-pale);color:var(--blue)">${QB[curTopic].name} badge: ${lvl.emoji} ${lvl.label}</div>
+      <div class="finish-btns">
+        <button class="fb-again" onclick="startTopic('${curTopic}')">🔁 Again ${repeatNote()}</button>
+        <button class="fb-home" onclick="showScreen('kid-hub')">🏠 Home</button>
+      </div>
+    </div>`;
+    if(pct===100||allMissionsDone) launchConfetti();
+  }
+  document.getElementById('q-container').innerHTML=html;
+}
+
+function repeatNote(){
+  const plays=app.dailyPlays[curTopic]||0;
+  const m=REPEAT_MULTS[Math.min(plays,REPEAT_MULTS.length-1)];
+  return m<1?'('+Math.round(m*100)+'% ⭐)':'';
+}
+
+// ═══════════════════════════
+// HUB
+// ═══════════════════════════
+function refreshHub(){
+  checkDailyReset();
+  document.getElementById('star-count').textContent=app.stars;
+  document.getElementById('streak-count').textContent=app.streak||0;
+
+  // cap
+  const capPct=Math.min((app.dailyStars/DAILY_CAP)*100,100);
+  const capBar=document.getElementById('cap-bar');
+  const capBanner=document.getElementById('cap-banner');
+  capBar.style.width=capPct+'%';
+  if(app.dailyStars>=DAILY_CAP){
+    capBanner.className='cap-banner full';
+    document.getElementById('cap-label').textContent='🚫 Daily cap reached!';
+    document.getElementById('cap-right').textContent='Come back tomorrow';
+    capBar.className='cap-bar-fill full';
+  } else {
+    capBanner.className='cap-banner active';
+    document.getElementById('cap-label').textContent='⭐ Today: '+app.dailyStars+'/'+DAILY_CAP;
+    document.getElementById('cap-right').textContent=(DAILY_CAP-app.dailyStars)+' left today';
+    capBar.className='cap-bar-fill';
+  }
+
+  // MISSIONS
+  const mList=document.getElementById('missions-list');
+  mList.innerHTML=app.missions.topics.map(t=>{
+    const done=app.missions.done.includes(t);
+    return `<div class="mission-row">
+      <div class="mission-check ${done?'done':''}">${done?'✓':''}</div>
+      <div class="mission-info">
+        <strong>${QB[t].emoji} ${QB[t].name}</strong>
+        <span>Pass one quiz (50% or more)</span>
+      </div>
+      ${done?'<button class="mission-go done-btn">✓ Done</button>':`<button class="mission-go" onclick="startTopic('${t}')">GO!</button>`}
+    </div>`;
+  }).join('');
+  document.getElementById('missions-banner').className='missions-complete-banner'+(app.missions.done.length===3?' show':'');
+
+  // reward
+  const starsAboveClaim=app.stars-app.rewardClaimed;
+  const goal=app.rewardGoal;
+  const curr=Math.min(Math.max(starsAboveClaim,0),goal);
+  document.getElementById('reward-name').textContent=app.rewardName;
+  document.getElementById('rew-curr').textContent=curr;
+  document.getElementById('rew-goal').textContent=goal;
+  document.getElementById('rew-bar').style.width=Math.min((curr/goal)*100,100)+'%';
+  document.getElementById('claim-btn').className='claim-btn'+(starsAboveClaim>=goal?' show':'');
+
+  document.getElementById('xp-bar').style.width=((app.stars%100)/100*100)+'%';
+
+  // badges
+  document.getElementById('badges-row').innerHTML=Object.keys(QB).map(t=>{
+    const avg=topicAvg(t); const lvl=getLevel(avg);
+    const cls=avg===null?'lvl-0':avg>=90?'lvl-4':avg>=75?'lvl-3':avg>=60?'lvl-2':'lvl-1';
+    return `<div class="badge-chip ${cls}">
+      <span class="b-icon">${lvl.emoji}</span>
+      <div class="b-info"><span class="b-name">${QB[t].name}</span><span class="b-level">${lvl.label}</span></div>
+    </div>`;
+  }).join('');
+
+  // topic grid with repeat multiplier shown
+  document.getElementById('topic-grid').innerHTML=Object.keys(QB).map(t=>{
+    const plays=app.dailyPlays[t]||0;
+    const m=REPEAT_MULTS[Math.min(plays,REPEAT_MULTS.length-1)];
+    const avg=topicAvg(t); const lvl=getLevel(avg);
+    const isMission=app.missions.topics.includes(t)&&!app.missions.done.includes(t);
+    return `<div class="topic-card ${QB[t].cls}" onclick="startTopic('${t}')">
+      <span class="t-emoji">${QB[t].emoji}</span>
+      <h3>${QB[t].name} ${isMission?'🎯':''}</h3>
+      <p>${QB[t].grade}</p>
+      <span class="grade-tag">${m<1?Math.round(m*100)+'% ⭐ today':'Full ⭐'}</span>
+      <span class="lvl-tag">${lvl.emoji}</span>
+      ${plays>0?`<span class="repeat-tag">Played ${plays}x today</span>`:''}
+    </div>`;
+  }).join('');
+
+  // activity
+  const list=document.getElementById('activity-list');
+  if(!app.history.length){
+    list.innerHTML=`<div class="act-row"><div class="act-dot" style="background:#e2e8f0"></div><div class="act-info"><strong>No activity yet</strong><span>Start with today's missions!</span></div></div>`;
+    return;
+  }
+  list.innerHTML=app.history.slice(0,5).map(h=>{
+    const c=Object.values(QB).find(x=>x.name===h.topic);
+    return `<div class="act-row">
+      <div class="act-dot" style="background:${c?c.color:'#94a3b8'}"></div>
+      <div class="act-info"><strong>${h.topic} ${h.rushed?'<span class="act-flag">⚡</span>':''}${h.failed?'<span class="act-flag">🔁</span>':''}</strong><span>${h.date} · ${h.correct}/${h.total} correct · ${h.score}%</span></div>
+      <div class="act-pts">⭐ +${h.stars}</div>
+    </div>`;
+  }).join('');
+}
+
+function claimReward(){
+  launchConfetti();
+  app.rewardClaimed=app.stars;
+  save();
+  refreshHub();
+  setTimeout(()=>alert('🎉 Reward claimed! Go tell Super Dad Vagner — you earned it! 💪'),300);
+}
+
+// ═══════════════════════════
+// PARENT
+// ═══════════════════════════
+function togglePin(){ const i=document.getElementById('pin-input'); i.type=i.type==='password'?'text':'password'; }
+function checkPin(){
+  cheatBlocked=true;
+  if(document.getElementById('pin-input').value==='1234'){
+    document.getElementById('p-login-form').style.display='none';
+    document.getElementById('p-dash').style.display='flex';
+    document.getElementById('p-err').style.display='none';
+    document.getElementById('pin-input').value='';
+    refreshDash(); populateReport();
+  } else { document.getElementById('p-err').style.display='block'; }
+}
+function logoutParent(){
+  document.getElementById('p-login-form').style.display='flex';
+  document.getElementById('p-dash').style.display='none';
+  showScreen('home');
+}
+
+function refreshDash(){
+  document.getElementById('d-stars').textContent=app.stars;
+  document.getElementById('d-quizzes').textContent=app.history.length;
+  const avg=app.history.length?Math.round(app.history.reduce((a,h)=>a+h.score,0)/app.history.length):null;
+  document.getElementById('d-avg').textContent=avg!==null?avg+'%':'—';
+  document.getElementById('d-streak').textContent=app.streak||0;
+
+  const rushSessions=app.history.filter(h=>h.rushed);
+  const cheatSessions=app.history.filter(h=>h.cheatSwitches>0);
+  const failedSessions=app.history.filter(h=>h.failed);
+  const totalCheat=app.history.reduce((a,h)=>a+(h.cheatSwitches||0),0);
+  const rushAlert=document.getElementById('d-rush-alert');
+  const rushHist=document.getElementById('d-rush-hist');
+  let parts=[];
+  if(rushSessions.length>0) parts.push(`⚡ ${rushSessions.length} rushed session(s) — stars cut 50%.`);
+  if(cheatSessions.length>0) parts.push(`🚫 ${cheatSessions.length} session(s) with tab switches (${totalCheat} total).`);
+  if(failedSessions.length>0) parts.push(`🔁 ${failedSessions.length} failed session(s) under 50% — stars removed, redo offered.`);
+  if(parts.length===0){
+    rushAlert.className='rush-alert'; rushAlert.textContent='';
+    rushHist.innerHTML='<div style="color:#64748b;font-size:13px;padding:8px 0">✅ No issues — Thomas is focused and passing!</div>';
+  } else {
+    rushAlert.className='rush-alert show';
+    rushAlert.textContent=parts.join(' ');
+    const flagged=[...new Set([...rushSessions,...cheatSessions,...failedSessions])].slice(0,6);
+    rushHist.innerHTML=flagged.map(h=>`
+      <div class="h-row">
+        <div class="hl"><strong>${h.topic}</strong><span>${h.date}${h.rushed?' · ⚡ rushed Q'+h.rushQs.join(', Q'):''}${h.cheatSwitches>0?' · 🚫 '+h.cheatSwitches+' switches':''}${h.failed?' · 🔁 failed, redo offered':''}</span></div>
+        <div class="h-score hs-low">${h.score}%</div>
+      </div>`).join('');
+  }
+
+  document.getElementById('d-topic-perf').innerHTML=Object.keys(QB).map(t=>{
+    const s=app.topicStats[t];
+    const avg2=s?Math.round(s.totalPct/s.attempts):null;
+    const lvl=getLevel(avg2);
+    const extra=[];
+    if(s&&s.rushFlags) extra.push('⚡'+s.rushFlags);
+    if(s&&s.redos) extra.push('🔁'+s.redos);
+    return `<div class="tp-box">
+      <div class="tp-top"><div class="tp-name">${QB[t].name}</div><div class="tp-badge">${lvl.emoji}</div></div>
+      <div class="tp-bar-bg"><div class="tp-bar-fill" style="width:${avg2||0}%;background:${QB[t].color}"></div></div>
+      <div class="tp-meta"><span>${s?s.attempts+' quiz(zes)':'No attempts'}${extra.length?' · '+extra.join(' '):''}</span><span>${avg2!==null?avg2+'%':'—'}</span></div>
+    </div>`;
+  }).join('');
+
+  const histEl=document.getElementById('d-hist');
+  if(!app.history.length){
+    histEl.innerHTML='<div class="h-row"><div class="hl"><strong style="color:#e2e8f0">No quizzes yet</strong></div></div>';
+  } else {
+    histEl.innerHTML=app.history.slice(0,15).map(h=>{
+      const cls=h.score>=70?'hs-high':h.score>=50?'hs-mid':'hs-low';
+      const flags=(h.rushed?' ⚡':'')+(h.cheatSwitches>0?' 🚫'+h.cheatSwitches:'')+(h.failed?' 🔁':'')+(h.redo?' (redo)':'');
+      return `<div class="h-row">
+        <div class="hl"><strong>${h.topic}${flags}</strong><span>${h.date} · ${h.correct}/${h.total} correct</span></div>
+        <div class="h-score ${cls}">${h.score}%</div>
+      </div>`;
+    }).join('');
+  }
+
+  document.getElementById('d-goal').value=app.rewardGoal;
+  document.getElementById('d-reward-name').value=app.rewardName;
+}
+
+function saveReward(){
+  const g=parseInt(document.getElementById('d-goal').value)||80;
+  const n=document.getElementById('d-reward-name').value.trim()||'Special reward!';
+  app.rewardGoal=g; app.rewardName=n; save();
+  const ok=document.getElementById('save-ok'); ok.style.display='block';
+  setTimeout(()=>ok.style.display='none',2000);
+}
+function resetAll(){
+  if(confirm('Reset ALL progress for Thomas? Cannot be undone.')){
+    app={stars:0,history:[],topicStats:{},rewardGoal:app.rewardGoal,rewardName:app.rewardName,rewardClaimed:0,streak:0,lastPracticeDate:'',dailyStars:0,dailyDate:'',dailyPlays:{},missions:{date:'',topics:[],done:[]},missionBonusGiven:''};
+    save(); checkDailyReset(); refreshDash(); populateReport();
+  }
+}
+
+// ═══════════════════════════
+// REPORT
+// ═══════════════════════════
+function buildReportText(){
+  const avg=app.history.length?Math.round(app.history.reduce((a,h)=>a+h.score,0)/app.history.length):0;
+  const rushN=app.history.filter(h=>h.rushed).length;
+  const cheatN=app.history.reduce((a,h)=>a+(h.cheatSwitches||0),0);
+  const failN=app.history.filter(h=>h.failed).length;
+  const topicsText=Object.keys(QB).map(t=>{
+    const s=app.topicStats[t]; const a=s?Math.round(s.totalPct/s.attempts):null;
+    const lvl=getLevel(a);
+    const extra=[];
+    if(s&&s.rushFlags) extra.push(s.rushFlags+' rushed');
+    if(s&&s.redos) extra.push(s.redos+' redos');
+    return `  - ${QB[t].name}: ${s?s.attempts+' quiz(zes), avg '+a+'% '+lvl.emoji:'No attempts yet'}${extra.length?' ['+extra.join(', ')+']':''}`;
+  }).join('\n');
+  const recentText=app.history.slice(0,5).map(h=>
+    `  - ${h.topic} on ${h.date}: ${h.score}% (${h.correct}/${h.total})${h.rushed?' RUSHED':''}${h.failed?' FAILED':''}${h.cheatSwitches>0?' '+h.cheatSwitches+' TAB SWITCHES':''}`
+  ).join('\n')||'  No quizzes yet.';
+  const missionsToday=app.missions.done.length+'/3 missions done today ('+app.missions.topics.map(t=>QB[t].name).join(', ')+')';
+  const today=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  return `Thomas's Math Quest — Progress Report
+Generated: ${today}
+
+OVERVIEW
+━━━━━━━━━━━━━━━━━━━
+Stars Earned : ${app.stars}
+Quizzes Done : ${app.history.length}
+Avg Score    : ${avg}%
+Day Streak   : ${app.streak||0}
+Daily Missions: ${missionsToday}
+
+FLAGS
+━━━━━━━━━━━━━━━━━━━
+Rushed sessions  : ${rushN} (stars cut 50%)
+Tab switches     : ${cheatN} total (possible calculator use)
+Failed sessions  : ${failN} (under 50% — stars removed, redo offered)
+
+BADGES BY TOPIC
+━━━━━━━━━━━━━━━━━━━
+${topicsText}
+
+LAST 5 QUIZZES
+━━━━━━━━━━━━━━━━━━━
+${recentText}
+
+REWARD PROGRESS
+━━━━━━━━━━━━━━━━━━━
+Goal  : "${app.rewardName}"
+Stars : ${Math.min(Math.max(app.stars-app.rewardClaimed,0),app.rewardGoal)} / ${app.rewardGoal}
+
+GAME RULES ACTIVE
+━━━━━━━━━━━━━━━━━━━
+- Daily cap: 80 stars
+- 3 daily missions from different topics, all 3 = +20 bonus
+- Repeating same topic same day: 100% then 50% then 25% stars
+- Score under 50% = 0 stars + redo challenge (reward kept)
+- Combo: 3 in a row = x1.5 stars, 5 in a row = x2
+
+— Thomas's Math Quest`;
+}
+function populateReport(){ const el=document.getElementById('report-text'); if(el) el.value=buildReportText(); }
+function copyReport(){
+  const text=document.getElementById('report-text').value;
+  navigator.clipboard.writeText(text).then(showCopyOk).catch(()=>{ document.getElementById('report-text').select(); document.execCommand('copy'); showCopyOk(); });
+}
+function showCopyOk(){ const c=document.getElementById('copy-confirm'); c.style.display='inline'; setTimeout(()=>c.style.display='none',2500); }
+
+// ═══════════════════════════
+// CONFETTI
+// ═══════════════════════════
+function launchConfetti(){
+  const wrap=document.getElementById('confetti-wrap'),canvas=document.getElementById('c-canvas');
+  wrap.classList.add('on'); canvas.width=window.innerWidth; canvas.height=window.innerHeight;
+  const ctx=canvas.getContext('2d');
+  const pieces=Array.from({length:140},()=>({x:Math.random()*canvas.width,y:Math.random()*-canvas.height*.5,r:Math.random()*9+4,dx:(Math.random()-.5)*3,dy:Math.random()*4+2,color:['#f59e0b','#22c55e','#2563eb','#f43f5e','#8b5cf6','#0891b2'][Math.floor(Math.random()*6)],rot:Math.random()*360}));
+  let frame=0;
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    pieces.forEach(p=>{ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);ctx.fillStyle=p.color;ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r*.6);ctx.restore();p.x+=p.dx;p.y+=p.dy;p.rot+=3;if(p.y>canvas.height){p.y=-20;p.x=Math.random()*canvas.width;}});
+    if(++frame<200) requestAnimationFrame(draw);
+    else{wrap.classList.remove('on');ctx.clearRect(0,0,canvas.width,canvas.height);}
+  }
+  draw();
+}
+
+checkDailyReset();
+refreshHub();
+</script>
+</body>
+</html>
