@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thomas's Math Heroes 💥</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Baloo+2:wght@600;700;800&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1a1a2e;
+  --pow-red:#e63946;
+  --pow-blue:#1d4ed8;
+  --pow-yellow:#ffd60a;
+  --pow-green:#06d6a0;
+  --pow-purple:#7209b7;
+  --pow-orange:#fb8500;
+  --paper:#fffef0;
+  --halftone:#ffe8a3;
+  --card:#ffffff;
+  --muted:#6b7280;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;
+  background-image:radial-gradient(circle, rgba(0,0,0,0.04) 1px, transparent 1px);background-size:14px 14px}
+.screen{display:none;min-height:100vh;flex-direction:column}
+.screen.active{display:flex}
+
+/* ── Comic helpers ── */
+.comic-border{border:3px solid var(--ink);box-shadow:5px 5px 0 var(--ink)}
+.comic-border-sm{border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink)}
+.bangers{font-family:'Bangers',cursive;letter-spacing:1.5px}
+
+/* ── HOME ── */
+#home{align-items:center;justify-content:center;gap:22px;padding:40px 22px;position:relative;overflow:hidden;
+  background:repeating-linear-gradient(45deg,#1d4ed8,#1d4ed8 40px,#1a44c0 40px,#1a44c0 80px)}
+#home::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle, rgba(255,255,255,0.12) 3px, transparent 3px);background-size:26px 26px;pointer-events:none}
+.hero-burst{position:relative;z-index:2;text-align:center}
+.hero-title{font-family:'Bangers',cursive;font-size:clamp(48px,13vw,96px);color:var(--pow-yellow);line-height:.92;
+  text-shadow:4px 4px 0 var(--ink),-2px -2px 0 var(--pow-red);letter-spacing:2px;transform:rotate(-3deg)}
+.hero-title .l2{color:#fff;text-shadow:4px 4px 0 var(--ink),-2px -2px 0 var(--pow-blue);display:block}
+.hero-sub{margin-top:14px;display:inline-block;background:var(--pow-red);color:#fff;font-weight:900;padding:8px 20px;
+  transform:rotate(-1deg);border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink);font-size:14px}
+.dad-badge{position:relative;z-index:2;background:var(--pow-yellow);color:var(--ink);font-weight:900;padding:8px 20px;
+  border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink);transform:rotate(1deg);font-size:13px}
+.home-btns{position:relative;z-index:2;display:flex;flex-direction:column;gap:16px;width:100%;max-width:330px;margin-top:8px}
+.btn-pow{padding:18px;background:var(--pow-yellow);color:var(--ink);border:4px solid var(--ink);box-shadow:5px 5px 0 var(--ink);
+  font-family:'Bangers',cursive;font-size:28px;letter-spacing:1.5px;cursor:pointer;transition:transform .1s;border-radius:4px}
+.btn-pow:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink)}
+.btn-pow:active{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--ink)}
+.btn-pow.secondary{background:#fff;font-size:18px;padding:14px}
+
+/* ── TOP BAR ── */
+.top-bar{background:var(--ink);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:4px solid var(--pow-yellow)}
+.top-bar h1{font-family:'Bangers',cursive;color:var(--pow-yellow);font-size:24px;letter-spacing:1.5px}
+.top-bar-right{display:flex;align-items:center;gap:8px}
+.hud-pill{display:flex;align-items:center;gap:5px;background:var(--pow-red);border:2.5px solid #fff;border-radius:100px;padding:4px 12px}
+.hud-pill.coins{background:var(--pow-yellow)}
+.hud-pill.coins strong{color:var(--ink)}
+.hud-pill strong{color:#fff;font-size:15px;font-weight:900}
+.hud-pill span{font-size:13px}
+.xp-wrap{background:#0d0d1a;height:8px;border-bottom:2px solid var(--ink)}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--pow-green),var(--pow-yellow));transition:width .5s}
+
+.kid-body{padding:18px;max-width:880px;margin:0 auto;width:100%}
+
+/* ── CAP ── */
+.cap-banner{padding:10px 16px;margin-bottom:16px;font-weight:900;font-size:13px;display:flex;align-items:center;gap:10px;
+  background:#fff;transform:rotate(-.5deg)}
+.cap-banner.full{background:#ffe0e3}
+.cap-bar-wrap{flex:1;background:#eee;border:2px solid var(--ink);height:12px}
+.cap-bar-fill{height:100%;background:var(--pow-green);transition:width .4s}
+.cap-bar-fill.full{background:var(--pow-red)}
+
+/* ── MISSIONS ── */
+.panel{background:#fff;padding:18px;margin-bottom:18px;position:relative}
+.panel-label{position:absolute;top:-14px;left:16px;background:var(--pow-purple);color:#fff;font-family:'Bangers',cursive;
+  font-size:18px;letter-spacing:1px;padding:2px 14px;border:3px solid var(--ink);transform:rotate(-2deg)}
+.panel-label.red{background:var(--pow-red)}
+.panel-label.blue{background:var(--pow-blue)}
+.panel-label.green{background:var(--pow-green);color:var(--ink)}
+.missions-bonus{position:absolute;top:-12px;right:14px;background:var(--pow-yellow);color:var(--ink);font-weight:900;
+  font-size:11px;padding:3px 10px;border:2.5px solid var(--ink);transform:rotate(2deg)}
+.mission-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:2px dashed #d8d8d8;margin-top:6px}
+.mission-row:first-child{margin-top:10px}
+.mission-row:last-child{border-bottom:none}
+.mission-check{width:30px;height:30px;border:3px solid var(--ink);display:flex;align-items:center;justify-content:center;
+  font-size:16px;flex-shrink:0;background:#fff;font-weight:900}
+.mission-check.done{background:var(--pow-green)}
+.mission-info{flex:1}
+.mission-info strong{font-size:15px;display:block;font-weight:900}
+.mission-info span{font-size:11px;color:var(--muted);font-weight:700}
+.go-btn{background:var(--pow-blue);color:#fff;border:3px solid var(--ink);box-shadow:2px 2px 0 var(--ink);
+  padding:7px 16px;font-family:'Bangers',cursive;font-size:16px;letter-spacing:1px;cursor:pointer;transition:transform .1s}
+.go-btn:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--ink)}
+.go-btn.done-btn{background:var(--pow-green);color:var(--ink);cursor:default}
+.missions-done-banner{background:var(--pow-green);color:var(--ink);font-weight:900;text-align:center;padding:12px;
+  margin-top:12px;border:3px solid var(--ink);font-size:14px;display:none}
+.missions-done-banner.show{display:block;animation:pop .3s ease}
+
+/* ── REWARD ── */
+.reward-panel{background:repeating-linear-gradient(45deg,#fb8500,#fb8500 20px,#fd9a2a 20px,#fd9a2a 40px);
+  padding:18px;margin-bottom:18px;color:#fff;position:relative}
+.reward-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.reward-top h3{font-family:'Bangers',cursive;font-size:14px;letter-spacing:1px;text-shadow:1px 1px 0 var(--ink)}
+.reward-name-big{font-family:'Bangers',cursive;font-size:24px;letter-spacing:1px;text-shadow:2px 2px 0 var(--ink)}
+.reward-nums{font-family:'Bangers',cursive;font-size:30px;text-shadow:2px 2px 0 var(--ink)}
+.rew-bar-wrap{background:rgba(0,0,0,.25);border:2.5px solid var(--ink);height:16px}
+.rew-bar-fill{height:100%;background:var(--pow-yellow);transition:width .5s}
+.claim-btn{display:none;margin-top:14px;width:100%;padding:14px;background:var(--pow-yellow);color:var(--ink);
+  border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink);font-family:'Bangers',cursive;font-size:22px;letter-spacing:1px;
+  cursor:pointer;animation:wobble 1s ease-in-out infinite}
+.claim-btn.show{display:block}
+@keyframes wobble{0%,100%{transform:rotate(-1deg) scale(1)}50%{transform:rotate(1deg) scale(1.02)}}
+@keyframes pop{0%{transform:scale(0)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+
+/* ── BADGES ── */
+.badges-scroll{display:flex;gap:10px;overflow-x:auto;padding:8px 2px 4px;margin-top:8px}
+.badge-chip{flex-shrink:0;display:flex;align-items:center;gap:8px;background:#fff;padding:8px 14px;
+  border:3px solid var(--ink);box-shadow:2px 2px 0 var(--ink)}
+.badge-chip .b-icon{font-size:22px}
+.badge-chip .b-name{font-size:11px;font-weight:900}
+.badge-chip .b-level{font-size:10px;color:var(--muted);font-weight:700}
+
+/* ── TOPIC CARDS ── */
+.topic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:16px;margin-top:8px}
+.topic-card{padding:20px 16px;cursor:pointer;color:#fff;position:relative;overflow:hidden;border:3px solid var(--ink);
+  box-shadow:4px 4px 0 var(--ink);transition:transform .1s}
+.topic-card::after{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.15) 2px,transparent 2px);background-size:16px 16px;pointer-events:none}
+.topic-card:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+.topic-card .t-emoji{font-size:40px;display:block;margin-bottom:8px;position:relative;z-index:1}
+.topic-card h3{font-family:'Bangers',cursive;font-size:20px;letter-spacing:1px;position:relative;z-index:1}
+.topic-card p{font-size:11px;font-weight:800;opacity:.9;margin-top:2px;position:relative;z-index:1}
+.topic-card .grade-tag{position:absolute;top:10px;right:10px;background:var(--ink);border-radius:100px;padding:2px 9px;font-size:10px;font-weight:900;z-index:1}
+.topic-card .lvl-tag{position:absolute;bottom:10px;right:12px;font-size:18px;z-index:1}
+.topic-card .repeat-tag{position:absolute;bottom:12px;left:16px;background:rgba(0,0,0,.35);border-radius:100px;padding:2px 9px;font-size:9px;font-weight:900;z-index:1}
+.tc-1{background:var(--pow-blue)}.tc-2{background:var(--pow-green);color:var(--ink)}.tc-3{background:var(--pow-red)}
+.tc-4{background:var(--pow-purple)}.tc-5{background:#0891b2}.tc-6{background:var(--pow-orange)}
+
+/* ── ACTIVITY ── */
+.activity-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.act-row{background:#fff;border:3px solid var(--ink);box-shadow:2px 2px 0 var(--ink);padding:11px 14px;display:flex;align-items:center;gap:12px}
+.act-dot{width:14px;height:14px;border:2px solid var(--ink);flex-shrink:0}
+.act-info{flex:1}
+.act-info strong{font-size:13px;display:block;font-weight:900}
+.act-info span{font-size:11px;color:var(--muted);font-weight:700}
+.act-pts{font-family:'Bangers',cursive;color:var(--pow-orange);font-size:18px}
+
+/* ── EXERCISE ── */
+#exercise-screen{background:var(--paper);background-image:radial-gradient(circle,rgba(0,0,0,0.04) 1px,transparent 1px);background-size:14px 14px}
+.ex-top{background:var(--ink);padding:12px 18px;display:flex;align-items:center;gap:12px}
+.back-btn{background:var(--pow-yellow);border:2.5px solid #fff;padding:6px 14px;font-family:'Bangers',cursive;font-size:16px;
+  letter-spacing:1px;cursor:pointer;color:var(--ink)}
+.ex-title-wrap{flex:1}
+.ex-title-wrap h2{font-family:'Bangers',cursive;font-size:20px;letter-spacing:1px;color:#fff}
+.ex-title-wrap small{font-size:11px;color:#9ca3af;font-weight:700}
+.ex-hud{background:var(--pow-yellow);border:2.5px solid #fff;border-radius:100px;padding:4px 12px;font-family:'Bangers',cursive;font-size:16px;color:var(--ink)}
+.ex-body{padding:22px 18px;max-width:680px;margin:0 auto;width:100%}
+.prog-wrap{background:#fff;border:2.5px solid var(--ink);height:14px;margin-bottom:14px}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--pow-blue),var(--pow-purple));transition:width .4s}
+
+.combo-bar{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:14px;min-height:34px}
+.combo-flame{font-size:24px;display:none}
+.combo-flame.show{display:inline;animation:pop .3s ease}
+.combo-text{font-family:'Bangers',cursive;font-size:18px;letter-spacing:1px;color:var(--muted)}
+.combo-text.hot{color:var(--pow-red)}
+.combo-mult{background:var(--pow-red);color:#fff;border:2.5px solid var(--ink);padding:2px 12px;font-family:'Bangers',cursive;
+  font-size:16px;letter-spacing:1px;display:none;transform:rotate(-2deg)}
+.combo-mult.show{display:inline-block;animation:pop .3s ease}
+
+.q-card{background:#fff;border:4px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:26px;animation:slideIn .25s ease}
+@keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+.q-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.q-num{background:var(--ink);color:#fff;padding:4px 12px;font-size:12px;font-weight:900}
+.q-type-tag{font-family:'Bangers',cursive;font-size:15px;letter-spacing:1px;padding:3px 12px;border:2.5px solid var(--ink);transform:rotate(-1deg)}
+.q-type-tag.math{background:var(--pow-blue);color:#fff}
+.q-type-tag.marvel{background:var(--pow-red);color:#fff}
+.q-type-tag.fortnite{background:var(--pow-purple);color:#fff}
+.q-pts{font-family:'Bangers',cursive;color:var(--pow-orange);font-size:18px}
+.q-text{font-size:21px;font-weight:900;line-height:1.4;margin:14px 0 22px}
+.opts-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt-btn{padding:14px 16px;border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink);background:#fff;font-family:'Nunito',sans-serif;
+  font-size:15px;font-weight:800;cursor:pointer;text-align:left;transition:transform .08s;color:var(--ink)}
+.opt-btn:hover:not(:disabled){transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink);background:var(--halftone)}
+.opt-btn.correct{background:var(--pow-green);box-shadow:3px 3px 0 var(--ink)}
+.opt-btn.wrong{background:var(--pow-red);color:#fff}
+.fill-row{display:flex;gap:10px}
+.fill-in{flex:1;padding:13px 16px;border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink);font-family:'Nunito',sans-serif;
+  font-size:17px;font-weight:800;color:var(--ink);background:#fff;outline:none}
+.fill-in.correct{background:var(--pow-green)}
+.fill-in.wrong{background:var(--pow-red);color:#fff}
+.check-btn{padding:13px 20px;background:var(--pow-blue);color:#fff;border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink);
+  font-family:'Bangers',cursive;font-size:17px;letter-spacing:1px;cursor:pointer;white-space:nowrap}
+
+.fb-box{padding:14px 18px;font-size:15px;font-weight:900;margin-top:14px;display:none;border:3px solid var(--ink)}
+.fb-box.show{display:block;animation:pop .3s ease}
+.fb-box.good{background:var(--pow-green)}
+.fb-box.bad{background:var(--pow-red);color:#fff}
+.fb-box.rush{background:var(--pow-yellow)}
+.fb-fun{font-size:12px;font-weight:800;margin-top:6px;opacity:.85}
+.next-btn{width:100%;padding:15px;background:var(--pow-green);color:var(--ink);border:3px solid var(--ink);box-shadow:4px 4px 0 var(--ink);
+  font-family:'Bangers',cursive;font-size:22px;letter-spacing:1.5px;cursor:pointer;margin-top:12px;display:none}
+.next-btn.show{display:block}
+
+/* POW splash */
+.pow-splash{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);z-index:400;pointer-events:none;
+  font-family:'Bangers',cursive;font-size:90px;letter-spacing:2px;color:var(--pow-yellow);
+  text-shadow:5px 5px 0 var(--ink),-3px -3px 0 var(--pow-red)}
+.pow-splash.fire{animation:powFire .7s ease-out}
+@keyframes powFire{0%{transform:translate(-50%,-50%) scale(0) rotate(-15deg);opacity:1}
+  60%{transform:translate(-50%,-50%) scale(1.2) rotate(5deg);opacity:1}
+  100%{transform:translate(-50%,-50%) scale(1.6) rotate(0);opacity:0}}
+
+/* OVERLAYS */
+.overlay{position:fixed;inset:0;z-index:500;display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:40px;text-align:center}
+.overlay.show{display:flex;animation:slideIn .3s ease}
+.rush-overlay{background:rgba(230,57,70,.95)}
+.rush-overlay h2{font-family:'Bangers',cursive;font-size:42px;letter-spacing:2px;color:#fff;text-shadow:3px 3px 0 var(--ink)}
+.rush-overlay p{color:#fff;font-size:16px;max-width:400px;line-height:1.6;font-weight:700}
+.cheat-overlay{background:rgba(26,26,46,.97)}
+.cheat-overlay h2{font-family:'Bangers',cursive;font-size:40px;letter-spacing:2px;color:var(--pow-red);text-shadow:2px 2px 0 #000}
+.cheat-overlay p{color:#cbd5e1;font-size:15px;max-width:380px;line-height:1.6;font-weight:700}
+.cheat-count{font-family:'Bangers',cursive;font-size:56px;color:var(--pow-red)}
+.ov-btn{padding:14px 38px;background:var(--pow-yellow);color:var(--ink);border:3px solid var(--ink);box-shadow:4px 4px 0 var(--ink);
+  font-family:'Bangers',cursive;font-size:22px;letter-spacing:1px;cursor:pointer}
+
+/* FINISH */
+.finish-card{background:#fff;border:4px solid var(--ink);box-shadow:8px 8px 0 var(--ink);padding:36px 26px;text-align:center;animation:slideIn .3s ease}
+.finish-emoji{font-size:72px;margin-bottom:8px}
+.finish-card h2{font-family:'Bangers',cursive;font-size:38px;letter-spacing:1.5px}
+.finish-card p{color:var(--muted);font-size:15px;margin-top:4px;font-weight:700}
+.score-big{font-family:'Bangers',cursive;font-size:56px;color:var(--pow-orange);margin:14px 0 4px;text-shadow:2px 2px 0 var(--ink)}
+.score-pct{font-size:18px;font-weight:900;margin-bottom:12px}
+.info-pill{padding:10px 16px;font-size:13px;font-weight:900;margin-bottom:10px;border:3px solid var(--ink)}
+.finish-btns{display:flex;gap:10px;margin-top:14px}
+.finish-btns button{flex:1;padding:13px;border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink);font-family:'Bangers',cursive;
+  font-size:18px;letter-spacing:1px;cursor:pointer}
+.fb-again{background:var(--pow-blue);color:#fff}
+.fb-home{background:#fff;color:var(--ink)}
+.redo-btn{background:var(--pow-red);color:#fff;animation:wobble 1s ease-in-out infinite}
+
+/* PARENT */
+#parent-screen{background:var(--ink)}
+.p-login{display:flex;align-items:center;justify-content:center;flex:1;padding:40px 20px}
+.p-login-box{background:#fff;border:4px solid var(--pow-yellow);box-shadow:8px 8px 0 rgba(0,0,0,.5);padding:36px;width:100%;max-width:400px}
+.p-login-box h2{font-family:'Bangers',cursive;font-size:30px;letter-spacing:1px;margin-bottom:4px}
+.p-login-box p{color:var(--muted);font-size:13px;margin-bottom:22px;font-weight:700}
+.p-login-btn{width:100%;padding:13px;background:var(--pow-blue);color:#fff;border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink);
+  font-family:'Bangers',cursive;font-size:20px;letter-spacing:1px;cursor:pointer;margin-top:10px}
+.p-err{color:var(--pow-red);font-size:12px;margin-top:6px;display:none;font-weight:800}
+#p-dash{display:none;flex-direction:column;flex:1}
+.p-top{background:#0d0d1a;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--pow-yellow)}
+.p-top h1{font-family:'Bangers',cursive;color:var(--pow-yellow);font-size:22px;letter-spacing:1px}
+.logout-btn{background:#334155;color:#cbd5e1;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:800}
+.p-body{padding:22px;max-width:900px;margin:0 auto;width:100%;display:flex;flex-direction:column;gap:18px}
+.d-card{background:#fff;border:3px solid var(--pow-yellow);padding:20px}
+.d-card h3{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:14px;font-weight:900}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.stat-box{background:var(--paper);border:2.5px solid var(--ink);padding:16px;text-align:center}
+.stat-box .n{font-family:'Bangers',cursive;font-size:32px;color:var(--pow-blue)}
+.stat-box .l{font-size:10px;color:var(--muted);margin-top:2px;font-weight:800}
+.topic-perf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.tp-box{background:var(--paper);border:2.5px solid var(--ink);padding:12px 14px}
+.tp-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+.tp-name{font-size:13px;font-weight:900}
+.tp-bar-bg{background:#e5e5e5;border:2px solid var(--ink);height:10px}
+.tp-bar-fill{height:100%;transition:width .5s}
+.tp-meta{display:flex;justify-content:space-between;margin-top:5px}
+.tp-meta span{font-size:11px;color:var(--muted);font-weight:700}
+.hist-list{display:flex;flex-direction:column;gap:7px}
+.h-row{background:var(--paper);border:2.5px solid var(--ink);padding:11px 14px;display:flex;align-items:center;justify-content:space-between}
+.h-row .hl strong{font-size:13px;font-weight:900}
+.h-row .hl span{color:var(--muted);font-size:11px;display:block;font-weight:700}
+.h-score{font-family:'Bangers',cursive;font-size:18px}
+.hs-high{color:var(--pow-green)}.hs-mid{color:var(--pow-orange)}.hs-low{color:var(--pow-red)}
+.rush-alert{background:#fff0f0;border:2.5px solid var(--pow-red);padding:12px 16px;color:#991b1b;font-size:13px;font-weight:800;display:none;margin-bottom:10px}
+.rush-alert.show{display:block}
+.rf-row{display:flex;align-items:center;gap:12px}
+.rf-row label{color:var(--muted);font-size:13px;width:140px;flex-shrink:0;font-weight:800}
+.rf-row input{flex:1;padding:10px 13px;background:var(--paper);border:2.5px solid var(--ink);color:var(--ink);font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;outline:none}
+.reward-form{display:flex;flex-direction:column;gap:12px}
+.save-btn{padding:11px 22px;background:var(--pow-green);color:var(--ink);border:2.5px solid var(--ink);box-shadow:2px 2px 0 var(--ink);font-family:'Bangers',cursive;font-size:16px;letter-spacing:1px;cursor:pointer;align-self:flex-start}
+.save-ok{color:var(--pow-green);font-size:12px;display:none;font-weight:800}
+.danger-btn{padding:9px 18px;background:#e5e5e5;color:var(--muted);border:2.5px solid var(--ink);font-weight:800;font-size:13px;cursor:pointer;margin-top:4px;align-self:flex-start}
+.danger-btn:hover{background:var(--pow-red);color:#fff}
+#report-text{width:100%;height:260px;background:var(--paper);color:var(--ink);border:2.5px solid var(--ink);padding:14px;font-family:'Courier New',monospace;font-size:12px;line-height:1.6;resize:none;outline:none;font-weight:600}
+.copy-btn{margin-top:10px;padding:11px 22px;background:var(--pow-blue);color:#fff;border:2.5px solid var(--ink);box-shadow:2px 2px 0 var(--ink);font-family:'Bangers',cursive;font-size:15px;letter-spacing:1px;cursor:pointer}
+
+#confetti-wrap{position:fixed;inset:0;pointer-events:none;z-index:1000;display:none}
+#confetti-wrap.on{display:block}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="home" class="screen active">
+  <div class="hero-burst">
+    <div class="hero-title">MATH<span class="l2">HEROES</span></div>
+    <div class="hero-sub">⚡ THOMAS'S SUPER QUEST ⚡</div>
+  </div>
+  <div class="dad-badge">🦸 Powered by Super Dad Vagner</div>
+  <div class="home-btns">
+    <button class="btn-pow" onclick="showScreen('kid-hub')">▶ PLAY!</button>
+    <button class="btn-pow secondary" onclick="showScreen('parent-screen')">🔒 Parent Zone</button>
+  </div>
+</div>
+
+<!-- KID HUB -->
+<div id="kid-hub" class="screen">
+  <div class="top-bar">
+    <h1>💥 MATH HEROES</h1>
+    <div class="top-bar-right">
+      <div class="hud-pill"><span>🔥</span><strong id="streak-count">0</strong></div>
+      <div class="hud-pill coins"><span>⭐</span><strong id="star-count">0</strong></div>
+    </div>
+  </div>
+  <div class="xp-wrap"><div class="xp-fill" id="xp-bar" style="width:0%"></div></div>
+
+  <div class="kid-body">
+    <div class="cap-banner" id="cap-banner">
+      <span id="cap-label">⭐ Today:</span>
+      <div class="cap-bar-wrap"><div class="cap-bar-fill" id="cap-bar" style="width:0%"></div></div>
+      <span id="cap-right" style="font-size:11px;white-space:nowrap"></span>
+    </div>
+
+    <div class="panel">
+      <div class="panel-label">🎯 Daily Missions</div>
+      <div class="missions-bonus">ALL 3 = +20 ⭐</div>
+      <div id="missions-list"></div>
+      <div class="missions-done-banner" id="missions-banner">🏆 ALL MISSIONS DONE! +20 BONUS!</div>
+    </div>
+
+    <div class="reward-panel">
+      <div class="reward-top">
+        <div>
+          <h3>🎁 REWARD GOAL</h3>
+          <div class="reward-name-big" id="reward-name">Keep going!</div>
+        </div>
+        <div style="text-align:right"><div class="reward-nums"><span id="rew-curr">0</span>/<span id="rew-goal">80</span></div></div>
+      </div>
+      <div class="rew-bar-wrap"><div class="rew-bar-fill" id="rew-bar" style="width:0%"></div></div>
+      <button class="claim-btn" id="claim-btn" onclick="claimReward()">🎉 CLAIM REWARD!</button>
+    </div>
+
+    <div class="panel">
+      <div class="panel-label green">🏅 Hero Badges</div>
+      <div class="badges-scroll" id="badges-row"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-label blue">📚 Battle Zones</div>
+      <p style="font-size:12px;color:var(--muted);font-weight:800;margin-top:8px">Every quiz mixes ⚔️ math with 🦸 Marvel &amp; 🎮 Fortnite trivia bonus questions!</p>
+      <div class="topic-grid" id="topic-grid"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-label red">📝 Recent Battles</div>
+      <div class="activity-list" id="activity-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- EXERCISE -->
+<div id="exercise-screen" class="screen">
+  <div class="ex-top">
+    <button class="back-btn" onclick="goBack()">← BACK</button>
+    <div class="ex-title-wrap"><h2 id="ex-title">Zone</h2><small id="ex-grade-tag"></small></div>
+    <div class="ex-hud">⭐ <span id="ex-stars">0</span></div>
+  </div>
+  <div class="ex-body">
+    <div class="prog-wrap"><div class="prog-fill" id="q-prog" style="width:0%"></div></div>
+    <div class="combo-bar">
+      <span class="combo-flame" id="combo-flame">🔥</span>
+      <span class="combo-text" id="combo-text">Get answers right to build a COMBO!</span>
+      <span class="combo-mult" id="combo-mult">x1.5</span>
+    </div>
+    <div id="q-container"></div>
+    <div class="fb-box" id="fb-box"></div>
+    <button class="next-btn" id="next-btn" onclick="nextQ()">NEXT →</button>
+  </div>
+</div>
+
+<div class="pow-splash" id="pow-splash">POW!</div>
+
+<!-- RUSH -->
+<div class="overlay rush-overlay" id="rush-overlay">
+  <div style="font-size:64px">🐢</div>
+  <h2>SLOW DOWN, HERO!</h2>
+  <p>You're answering super fast — real heroes think before they strike! Read carefully. You've got this! 💪</p>
+  <button class="ov-btn" onclick="dismissRush()">OK, I'LL FOCUS!</button>
+</div>
+
+<!-- CHEAT -->
+<div class="overlay cheat-overlay" id="cheat-overlay">
+  <div style="font-size:64px">🚫</div>
+  <h2>WHERE'D YOU GO?</h2>
+  <p>You left the battle! No calculators or outside help — your brain is your superpower! 💪</p>
+  <div class="cheat-count" id="cheat-count">0</div>
+  <p style="font-size:12px;color:#94a3b8">tab switches this battle · Super Dad Vagner sees this</p>
+  <button class="ov-btn" onclick="dismissCheat()">BACK TO BATTLE!</button>
+</div>
+
+<!-- PARENT -->
+<div id="parent-screen" class="screen">
+  <div class="p-login" id="p-login-form">
+    <div class="p-login-box">
+      <h2>🔒 PARENT ZONE</h2>
+      <p>Super Dad Vagner — enter your PIN to see Thomas's progress.</p>
+      <div style="position:relative">
+        <input type="password" id="pin-input" placeholder="Enter PIN" maxlength="6" autocomplete="off"
+          onkeydown="if(event.key==='Enter') checkPin()"
+          style="width:100%;padding:13px 48px 13px 16px;border:3px solid var(--ink);background:var(--paper);color:var(--ink);font-family:'Nunito',sans-serif;font-size:20px;letter-spacing:6px;outline:none;font-weight:800">
+        <button onclick="togglePin()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:18px">👁️</button>
+      </div>
+      <button class="p-login-btn" onclick="checkPin()">ENTER →</button>
+      <div class="p-err" id="p-err">❌ Wrong PIN. Try again.</div>
+      <div style="margin-top:16px;text-align:center"><button style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;font-weight:800" onclick="showScreen('home')">← Back to Home</button></div>
+    </div>
+  </div>
+  <div id="p-dash">
+    <div class="p-top"><h1>🦸 SUPER DAD VAGNER — THOMAS'S PROGRESS</h1><button class="logout-btn" onclick="logoutParent()">Logout</button></div>
+    <div class="p-body">
+      <div class="d-card"><h3>Overview</h3>
+        <div class="stats-row">
+          <div class="stat-box"><div class="n" id="d-stars">0</div><div class="l">Total Stars</div></div>
+          <div class="stat-box"><div class="n" id="d-quizzes">0</div><div class="l">Battles Done</div></div>
+          <div class="stat-box"><div class="n" id="d-avg">—</div><div class="l">Avg Score</div></div>
+          <div class="stat-box"><div class="n" id="d-streak">0</div><div class="l">Day Streak 🔥</div></div>
+        </div>
+      </div>
+      <div class="d-card"><h3>⚠️ Rushing / Cheating / Redo Alerts</h3><div class="rush-alert" id="d-rush-alert"></div><div class="hist-list" id="d-rush-hist"></div></div>
+      <div class="d-card"><h3>Math Performance by Zone</h3><div class="topic-perf-grid" id="d-topic-perf"></div></div>
+      <div class="d-card"><h3>Battle History (Last 15)</h3><div class="hist-list" id="d-hist"></div></div>
+      <div class="d-card"><h3>📋 Progress Report — Copy &amp; Email</h3>
+        <p style="color:var(--muted);font-size:13px;margin-bottom:14px;font-weight:700">Copy and email to <strong>vagnerpilar@hotmail.com</strong> / <strong>gracispilar@gmail.com</strong></p>
+        <textarea id="report-text" readonly></textarea><br>
+        <button class="copy-btn" onclick="copyReport()">📋 Copy to Clipboard</button>
+        <span id="copy-confirm" style="margin-left:12px;color:var(--pow-green);font-size:13px;display:none;font-weight:800">✓ Copied!</span>
+      </div>
+      <div class="d-card"><h3>Reward Settings</h3>
+        <div class="reward-form">
+          <div class="rf-row"><label>Stars needed</label><input type="number" id="d-goal" placeholder="80" min="1" max="9999"></div>
+          <div class="rf-row"><label>Reward description</label><input type="text" id="d-reward-name" placeholder="e.g. Fortnite V-Bucks 🎮"></div>
+          <button class="save-btn" onclick="saveReward()">💾 SAVE</button>
+          <div class="save-ok" id="save-ok">✓ Saved!</div>
+          <button class="danger-btn" onclick="resetAll()">🗑️ Reset All Progress</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="confetti-wrap"><canvas id="c-canvas"></canvas></div>
+
+<script>
+// CONSTANTS
+const DAILY_CAP=80, RUSH_MS=5000, RUSH_TRIGGER=3, PASS=50, MISSION_BONUS=20;
+const MATH_PER_SESSION=5, TRIVIA_PER_SESSION=2; // 5 math + 2 trivia = 7 questions
+const REPEAT_MULTS=[1,0.5,0.25];
+const LEVELS=[{min:0,label:'Rookie',emoji:'⬜'},{min:1,label:'Sidekick 🌱',emoji:'🌱'},{min:60,label:'Hero 🌟',emoji:'🌟'},{min:75,label:'Super Hero 🔥',emoji:'🔥'},{min:90,label:'LEGEND 🏆',emoji:'🏆'}];
+
+// STATE
+let app={stars:0,history:[],topicStats:{},rewardGoal:80,rewardName:'Special reward!',rewardClaimed:0,streak:0,lastPracticeDate:'',dailyStars:0,dailyDate:'',dailyPlays:{},missions:{date:'',topics:[],done:[]},missionBonusGiven:''};
+function load(){const v=localStorage.getItem('thomas_heroes_v1');if(v){app=Object.assign(app,JSON.parse(v));return;}const o=localStorage.getItem('thomas_math_v4');if(o){const old=JSON.parse(o);app=Object.assign(app,old);save();}}
+function save(){localStorage.setItem('thomas_heroes_v1',JSON.stringify(app));}
+load();
+function todayStr(){return new Date().toISOString().slice(0,10);}
+function checkDailyReset(){
+  const t=todayStr();
+  if(app.dailyDate!==t){app.dailyStars=0;app.dailyDate=t;app.dailyPlays={};save();}
+  if(app.missions.date!==t){
+    const topics=Object.keys(QB);let seed=0;for(const c of t)seed=(seed*31+c.charCodeAt(0))>>>0;
+    const sh=[...topics];for(let i=sh.length-1;i>0;i--){seed=(seed*1103515245+12345)>>>0;const j=seed%(i+1);[sh[i],sh[j]]=[sh[j],sh[i]];}
+    app.missions={date:t,topics:sh.slice(0,3),done:[]};save();
+  }
+}
+function updateStreak(){const t=todayStr();if(app.lastPracticeDate===t)return;const y=new Date();y.setDate(y.getDate()-1);const ys=y.toISOString().slice(0,10);if(app.lastPracticeDate===ys)app.streak=(app.streak||0)+1;else app.streak=1;app.lastPracticeDate=t;save();}
+function getLevel(a){if(a===null||a===undefined)return LEVELS[0];for(let i=LEVELS.length-1;i>=0;i--)if(a>=LEVELS[i].min)return LEVELS[i];return LEVELS[0];}
+function topicAvg(t){const s=app.topicStats[t];if(!s||!s.attempts)return null;return Math.round(s.totalPct/s.attempts);}
+
+// NAV
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');if(id==='kid-hub'){checkDailyReset();refreshHub();}if(id==='exercise-screen'){setTimeout(()=>{cheatBlocked=false;},500);}if(id==='parent-screen'){cheatBlocked=true;}}
+function goBack(){quizActive=false;showScreen('kid-hub');}
+
+// MATH BANK (verified, comma-free, grade-appropriate)
+const QB={
+  addition:{name:'Addition & Subtraction',grade:'3rd Grade Review',emoji:'➕',cls:'tc-1',color:'#1d4ed8',questions:[
+    {type:'mc',q:'What is 347 + 256?',opts:['503','593','603','613'],ans:2,pts:10},
+    {type:'mc',q:'What is 1500 minus 567?',opts:['933','943','843','923'],ans:0,pts:10},
+    {type:'fill',q:'825 + 139 = ___',ans:'964',pts:10},
+    {type:'mc',q:'What is 2500 minus 1348?',opts:['1042','1152','1162','952'],ans:1,pts:15},
+    {type:'fill',q:'1000 minus 437 = ___',ans:'563',pts:10},
+    {type:'mc',q:'Sam has 456 stickers. He gets 278 more. How many now?',opts:['624','724','734','744'],ans:2,pts:15},
+    {type:'mc',q:'Missing number: 583 + ___ = 900',opts:['217','317','327','307'],ans:1,pts:15},
+    {type:'fill',q:'3456 + 2311 = ___',ans:'5767',pts:10},
+    {type:'mc',q:'What is 4000 minus 2756?',opts:['1144','1244','1354','2244'],ans:1,pts:15},
+    {type:'mc',q:'Eva scored 325 on Monday and 487 on Tuesday. Total?',opts:['702','812','802','822'],ans:1,pts:15},
+  ]},
+  multiplication:{name:'Multiplication',grade:'3rd Grade Review',emoji:'✖️',cls:'tc-2',color:'#06d6a0',questions:[
+    {type:'mc',q:'What is 6 times 7?',opts:['36','42','48','56'],ans:1,pts:10},
+    {type:'fill',q:'8 times 9 = ___',ans:'72',pts:10},
+    {type:'mc',q:'What is 4 times 12?',opts:['44','46','48','52'],ans:2,pts:10},
+    {type:'mc',q:'6 rows of 8 apples. Total?',opts:['42','48','54','56'],ans:1,pts:15},
+    {type:'mc',q:'What is 9 times 9?',opts:['72','81','90','63'],ans:1,pts:10},
+    {type:'fill',q:'7 times 8 = ___',ans:'56',pts:10},
+    {type:'mc',q:'6 times ___ = 54',opts:['7','8','9','10'],ans:2,pts:15},
+    {type:'mc',q:'What is 11 times 7?',opts:['70','77','74','84'],ans:1,pts:10},
+    {type:'fill',q:'12 times 6 = ___',ans:'72',pts:10},
+    {type:'mc',q:'5 bags with 12 oranges each. Total?',opts:['50','55','60','65'],ans:2,pts:15},
+  ]},
+  division:{name:'Division',grade:'3rd Grade Review',emoji:'➗',cls:'tc-3',color:'#e63946',questions:[
+    {type:'mc',q:'What is 36 divided by 6?',opts:['4','5','6','7'],ans:2,pts:10},
+    {type:'fill',q:'72 divided by 8 = ___',ans:'9',pts:10},
+    {type:'mc',q:'What is 45 divided by 9?',opts:['4','5','6','7'],ans:1,pts:10},
+    {type:'mc',q:'24 cookies shared by 4 kids. Each gets?',opts:['4','5','6','8'],ans:2,pts:15},
+    {type:'mc',q:'What is 63 divided by 7?',opts:['7','8','9','10'],ans:2,pts:10},
+    {type:'fill',q:'56 divided by 7 = ___',ans:'8',pts:10},
+    {type:'mc',q:'17 divided by 5 — what is the remainder?',opts:['0','1','2','3'],ans:2,pts:15},
+    {type:'mc',q:'What is 100 divided by 10?',opts:['5','10','15','20'],ans:1,pts:10},
+    {type:'fill',q:'81 divided by 9 = ___',ans:'9',pts:10},
+    {type:'mc',q:'50 divided by 6. Whole number answer only.',opts:['6','7','8','9'],ans:2,pts:15},
+  ]},
+  fractions:{name:'Fractions',grade:'3rd to 4th Grade',emoji:'🍕',cls:'tc-4',color:'#7209b7',questions:[
+    {type:'mc',q:'Which fraction is the largest?',opts:['1/4','1/2','1/3','1/8'],ans:1,pts:10},
+    {type:'mc',q:'1/4 + 2/4 = ?',opts:['3/4','3/8','2/8','1/2'],ans:0,pts:10},
+    {type:'mc',q:'Pizza cut in 8 slices. Tom eats 3. Fraction eaten?',opts:['3/5','5/8','3/8','1/3'],ans:2,pts:15},
+    {type:'fill',q:'3 days out of a week = ___ out of 7',ans:'3/7',pts:15},
+    {type:'mc',q:'Which fraction equals 1/2?',opts:['2/6','2/4','3/8','4/10'],ans:1,pts:15},
+    {type:'mc',q:'5/6 minus 2/6 = ?',opts:['3/6','3/12','2/6','1/6'],ans:0,pts:10},
+    {type:'mc',q:'Order smallest to largest:  3/4   1/4   2/4',opts:['1/4  2/4  3/4','3/4  2/4  1/4','2/4  1/4  3/4','1/4  3/4  2/4'],ans:0,pts:10},
+    {type:'mc',q:'Which is less than 1/2?',opts:['3/4','4/6','2/8','3/5'],ans:2,pts:15},
+    {type:'fill',q:'1/3 + 1/3 = ___',ans:'2/3',pts:10},
+    {type:'mc',q:'Ribbon 3/4 m plus ribbon 1/4 m. Total?',opts:['4/8 m','1 m','2 m','4/4 m'],ans:1,pts:15},
+  ]},
+  place_value:{name:'Place Value',grade:'4th Grade Intro',emoji:'🔟',cls:'tc-5',color:'#0891b2',questions:[
+    {type:'mc',q:'What is the value of digit 6 in 46382?',opts:['6','60','600','6000'],ans:3,pts:10},
+    {type:'mc',q:'What is 10000 more than 34500?',opts:['35500','44500','34600','34510'],ans:1,pts:10},
+    {type:'fill',q:'In 258430 the digit 5 is in the ten-_____ place',ans:'thousands',pts:15},
+    {type:'mc',q:'Round 4672 to the nearest hundred',opts:['4600','4700','4670','5000'],ans:1,pts:10},
+    {type:'mc',q:'What is 100000 more than 356000?',opts:['357000','366000','456000','346000'],ans:2,pts:15},
+    {type:'mc',q:'3 thousands + 7 hundreds + 0 tens + 5 ones = ?',opts:['3705','3075','3750','3507'],ans:0,pts:15},
+    {type:'fill',q:'Round 73418 to the nearest thousand = ___',ans:'73000',pts:15},
+    {type:'mc',q:'Which number is greatest?  89001   90001   89100   88999',opts:['89001','90001','89100','88999'],ans:1,pts:10},
+    {type:'mc',q:'What is the place value of 4 in 2400000?',opts:['Thousands','Ten-thousands','Hundred-thousands','Millions'],ans:2,pts:15},
+    {type:'mc',q:'Expanded form of 5306?',opts:['5000+300+6','5000+30+6','500+300+6','5000+300+60'],ans:0,pts:10},
+  ]},
+  word_problems:{name:'Word Problems',grade:'4th Grade Intro',emoji:'📝',cls:'tc-6',color:'#fb8500',questions:[
+    {type:'mc',q:'24 classrooms with 28 students each. Total students?',opts:['572','632','672','652'],ans:2,pts:15},
+    {type:'mc',q:'Saved 135 + 248 + 97 dollars. Total?',opts:['470','480','490','460'],ans:1,pts:15},
+    {type:'mc',q:'96 eggs packed in boxes of 8. How many boxes?',opts:['10','11','12','13'],ans:2,pts:15},
+    {type:'fill',q:'7 shelves with 45 books each. Total books = ___',ans:'315',pts:15},
+    {type:'mc',q:'3/4 mile per day for 4 days. Total miles?',opts:['3 miles','1 mile','2 miles','4 miles'],ans:0,pts:15},
+    {type:'mc',q:'Rectangle 16 cm long and 9 cm wide. What is the perimeter?',opts:['25 cm','50 cm','144 cm','72 cm'],ans:1,pts:15},
+    {type:'mc',q:'Tom had 1250 cards and gave away 378. How many left?',opts:['872','882','962','972'],ans:0,pts:15},
+    {type:'fill',q:'8 dollars per ticket times 23 tickets = ___',ans:'184',pts:15},
+    {type:'mc',q:'5 friends share 95 grapes equally. Each gets?',opts:['17','18','19','20'],ans:2,pts:15},
+    {type:'mc',q:'A book has 126 pages. Julia reads 9 pages per day. How many days to finish?',opts:['12','13','14','15'],ans:2,pts:15},
+  ]},
+};
+
+// TRIVIA BANK (original questions, no copyrighted text — general knowledge)
+const TRIVIA={
+  marvel:[
+    {q:'🦸 Which hero wears a red and gold suit of armor and is a genius inventor?',opts:['Iron Man','Thor','Hulk','Hawkeye'],ans:0},
+    {q:'🦸 What metal is Captain America\'s shield famously made of?',opts:['Iron','Gold','Vibranium','Steel'],ans:2},
+    {q:'🦸 Which hero turns big, green, and super strong when he gets angry?',opts:['Spider-Man','Hulk','Ant-Man','Vision'],ans:1},
+    {q:'🦸 Who swings between buildings using webs?',opts:['Black Panther','Spider-Man','Falcon','Star-Lord'],ans:1},
+    {q:'🦸 Thor carries a powerful hammer. What is it called?',opts:['Stormbreaker','Mjolnir','Excalibur','Gungnir'],ans:1},
+    {q:'🦸 Which hero can shrink down to the size of an ant?',opts:['Ant-Man','Hawkeye','War Machine','Drax'],ans:0},
+    {q:'🦸 Black Panther is the protector of which fictional African nation?',opts:['Sokovia','Wakanda','Latveria','Genosha'],ans:1},
+    {q:'🦸 What color is the Hulk?',opts:['Blue','Red','Green','Purple'],ans:2},
+    {q:'🦸 Which team includes Iron Man, Thor, and Captain America?',opts:['X-Men','Avengers','Guardians','Defenders'],ans:1},
+    {q:'🦸 Doctor Strange is a master of what kind of arts?',opts:['Martial','Mystic','Culinary','Musical'],ans:1},
+    {q:'🦸 Which hero uses a bow and arrows?',opts:['Hawkeye','Vision','Loki','Groot'],ans:0},
+    {q:'🦸 Groot can only say three words: "I am ___."',opts:['Hero','Groot','Strong','Here'],ans:1},
+  ],
+  fortnite:[
+    {q:'🎮 In Fortnite, what do you build structures with?',opts:['Coins','Materials','Gems','Bricks'],ans:1},
+    {q:'🎮 What is the storm in Fortnite slowly doing during a match?',opts:['Growing bigger','Shrinking the safe zone','Giving health','Dropping loot'],ans:1},
+    {q:'🎮 How many players are usually in a solo Battle Royale match?',opts:['50','75','100','25'],ans:2},
+    {q:'🎮 What do you call the flying vehicle that drops players onto the map?',opts:['Battle Bus','Sky Ship','Loot Plane','Storm Jet'],ans:0},
+    {q:'🎮 What is the goal of Battle Royale mode?',opts:['Collect coins','Be the last one standing','Build the tallest tower','Find treasure'],ans:1},
+    {q:'🎮 In Fortnite, what is the rarest color tier for weapons usually?',opts:['Green','Blue','Gold/Legendary','Grey'],ans:2},
+    {q:'🎮 What do players use to glide down from the Battle Bus?',opts:['Parachute','Glider','Jetpack','Wings'],ans:1},
+    {q:'🎮 What is the name of the in-game currency you can buy in Fortnite?',opts:['Coins','V-Bucks','Gold','Gems'],ans:1},
+    {q:'🎮 Building a quick wall is useful mostly for what?',opts:['Decoration','Protection','Storage','Trading'],ans:1},
+    {q:'🎮 What do you call cosmetic outfits in Fortnite?',opts:['Suits','Skins','Costumes','Gear'],ans:1},
+    {q:'🎮 A "Victory Royale" means what?',opts:['You found gold','You won the match','You built a base','You leveled up'],ans:1},
+    {q:'🎮 What item can restore your shield in Fortnite?',opts:['Shield Potion','Wood','Pickaxe','Map'],ans:0},
+  ],
+};
+
+const FUN_FACTS={
+  correct:['🦸 BOOM! Hero move!','💥 KAPOW! Nailed it!','⚡ Super speed brain!','🎮 Victory Royale vibes!','🔥 You\'re leveling up!','💪 Hero strength!'],
+};
+
+// CHEAT
+let cheatCount=0,quizActive=false,cheatBlocked=false;
+window.addEventListener('blur',()=>{if(!quizActive||cheatBlocked)return;cheatCount++;document.getElementById('cheat-count').textContent=cheatCount;document.getElementById('cheat-overlay').classList.add('show');});
+document.addEventListener('contextmenu',e=>{if(quizActive)e.preventDefault();});
+document.addEventListener('keydown',e=>{if(!quizActive)return;const b=(e.key==='F12')||(e.ctrlKey&&['u','U','s','S','a','A','c','C','p','P'].includes(e.key))||(e.metaKey&&['u','s','a','c','p'].includes(e.key.toLowerCase()));if(b)e.preventDefault();});
+function dismissCheat(){document.getElementById('cheat-overlay').classList.remove('show');}
+function resetCheatCount(){cheatCount=0;document.getElementById('cheat-count').textContent=0;}
+
+// QUIZ ENGINE
+let curTopic='',curQs=[],curIdx=0,sesStarsEarned=0,sesDisplayStars=0,sesCorrect=0,sesMathTotal=0,sesMathCorrect=0,answered=false;
+let qStartTime=0,rushCount=0,rushWarned=false,sesRushFlags=[],combo=0,isRedo=false;
+
+function comboMult(){if(combo>=5)return 2;if(combo>=3)return 1.5;return 1;}
+function repeatMult(){const p=app.dailyPlays[curTopic]||0;return REPEAT_MULTS[Math.min(p,REPEAT_MULTS.length-1)];}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function buildSession(t){
+  // 5 math from topic
+  const math=shuffle([...QB[t].questions]).slice(0,MATH_PER_SESSION).map(q=>({...q,kind:'math'}));
+  // 2 trivia: 1 marvel + 1 fortnite (random)
+  const marvel={...shuffle([...TRIVIA.marvel])[0],kind:'marvel',pts:10,type:'mc'};
+  const fortnite={...shuffle([...TRIVIA.fortnite])[0],kind:'fortnite',pts:10,type:'mc'};
+  // interleave: math math TRIVIA math math TRIVIA math  -> mix it
+  const session=[math[0],math[1],marvel,math[2],math[3],fortnite,math[4]];
+  return session;
+}
+
+function startTopic(t,redo){
+  checkDailyReset();
+  quizActive=true;resetCheatCount();
+  curTopic=t;answered=false;rushCount=0;rushWarned=false;sesRushFlags=[];
+  sesStarsEarned=0;sesDisplayStars=0;sesCorrect=0;sesMathTotal=0;sesMathCorrect=0;combo=0;isRedo=!!redo;
+  curQs=buildSession(t);curIdx=0;
+  sesMathTotal=curQs.filter(q=>q.kind==='math').length;
+  document.getElementById('ex-title').textContent=QB[t].name+(isRedo?' — REDO! 🔁':'');
+  document.getElementById('ex-grade-tag').textContent=QB[t].grade+' · +Marvel & Fortnite bonus';
+  document.getElementById('ex-stars').textContent=app.stars;
+  showScreen('exercise-screen');updateComboUI();renderQ();
+}
+
+function updateComboUI(){
+  const f=document.getElementById('combo-flame'),tx=document.getElementById('combo-text'),m=document.getElementById('combo-mult');
+  if(combo>=5){f.className='combo-flame show';f.textContent='🔥🔥';tx.textContent='UNSTOPPABLE! '+combo+' in a row!';tx.className='combo-text hot';m.textContent='x2 STARS';m.className='combo-mult show';}
+  else if(combo>=3){f.className='combo-flame show';f.textContent='🔥';tx.textContent='COMBO! '+combo+' streak!';tx.className='combo-text hot';m.textContent='x1.5';m.className='combo-mult show';}
+  else if(combo>0){f.className='combo-flame';tx.textContent=combo+' right — 3 in a row = COMBO!';tx.className='combo-text';m.className='combo-mult';}
+  else{f.className='combo-flame';tx.textContent='Get answers right to build a COMBO!';tx.className='combo-text';m.className='combo-mult';}
+}
+
+function renderQ(){
+  if(curIdx>=curQs.length){showFinish();return;}
+  answered=false;qStartTime=Date.now();
+  const q=curQs[curIdx];
+  document.getElementById('q-prog').style.width=(curIdx/curQs.length)*100+'%';
+  document.getElementById('fb-box').className='fb-box';
+  document.getElementById('next-btn').className='next-btn';
+  const effPts=Math.round(q.pts*comboMult()*(q.kind==='math'?repeatMult():1));
+  const tag=q.kind==='math'?'<span class="q-type-tag math">⚔️ MATH</span>':q.kind==='marvel'?'<span class="q-type-tag marvel">🦸 MARVEL BONUS</span>':'<span class="q-type-tag fortnite">🎮 FORTNITE BONUS</span>';
+  let html=`<div class="q-card"><div class="q-header"><span class="q-num">Q${curIdx+1}/${curQs.length}</span><span class="q-pts">⭐ +${effPts}</span></div>${tag}<div class="q-text">${q.q}</div>`;
+  if(q.type==='mc'){html+=`<div class="opts-grid">`;q.opts.forEach((o,i)=>{html+=`<button class="opt-btn" id="opt${i}" onclick="pickOpt(${i})">${o}</button>`;});html+=`</div>`;}
+  else{html+=`<div class="fill-row"><input class="fill-in" id="fill-in" type="text" placeholder="Type answer…" onkeydown="if(event.key==='Enter')checkFill()"><button class="check-btn" onclick="checkFill()">GO ✓</button></div>`;}
+  html+=`</div>`;
+  document.getElementById('q-container').innerHTML=html;
+  if(q.type==='fill')setTimeout(()=>{const el=document.getElementById('fill-in');if(el)el.focus();},100);
+}
+
+function checkRush(){const e=Date.now()-qStartTime;if(e<RUSH_MS){rushCount++;sesRushFlags.push(curIdx+1);if(rushCount>=RUSH_TRIGGER&&!rushWarned){rushWarned=true;setTimeout(()=>document.getElementById('rush-overlay').classList.add('show'),400);}return true;}return false;}
+function dismissRush(){document.getElementById('rush-overlay').classList.remove('show');}
+function addStars(p){checkDailyReset();const r=Math.max(0,DAILY_CAP-app.dailyStars);const e=Math.min(p,r);app.stars+=e;app.dailyStars+=e;save();return e;}
+function removeStars(p){app.stars=Math.max(0,app.stars-p);app.dailyStars=Math.max(0,app.dailyStars-p);save();}
+
+function pickOpt(i){if(answered)return;answered=true;const q=curQs[curIdx],ok=q.ans===i;const r=checkRush();q.opts.forEach((_,x)=>{const b=document.getElementById('opt'+x);b.disabled=true;if(x===q.ans)b.classList.add('correct');else if(x===i&&!ok)b.classList.add('wrong');});handleResult(ok,q,q.opts[q.ans],r);}
+function checkFill(){if(answered)return;const inp=document.getElementById('fill-in');const v=inp.value.trim().toLowerCase().replace(/,/g,'').replace(/\s+/g,'');const q=curQs[curIdx];const ca=q.ans.toLowerCase().replace(/,/g,'').replace(/\s+/g,'');const ok=v===ca;const r=checkRush();answered=true;inp.disabled=true;inp.className='fill-in '+(ok?'correct':'wrong');handleResult(ok,q,q.ans,r);}
+
+function powSplash(txt){const p=document.getElementById('pow-splash');p.textContent=txt;p.className='pow-splash';void p.offsetWidth;p.className='pow-splash fire';}
+
+function handleResult(ok,q,correctAns,rushed){
+  const fb=document.getElementById('fb-box');
+  if(q.kind==='math'){if(ok)sesMathCorrect++;}
+  if(ok){
+    sesCorrect++;combo++;
+    const effPts=Math.round(q.pts*comboMult()*(q.kind==='math'?repeatMult():1));
+    const earned=addStars(effPts);sesStarsEarned+=earned;sesDisplayStars+=earned;
+    const capFull=app.dailyStars>=DAILY_CAP;
+    if(combo===3||combo===5)powSplash(combo===5?'MEGA!':'COMBO!');
+    else if(q.kind!=='math')powSplash(q.kind==='marvel'?'HERO!':'GG!');
+    if(rushed){fb.innerHTML='✅ Correct, but too fast — real heroes think first! ⚡';fb.className='fb-box rush show';}
+    else if(capFull&&earned===0){fb.innerHTML='✅ Correct! Daily 80⭐ cap hit — still counts for missions!';fb.className='fb-box good show';}
+    else{const combTxt=comboMult()>1?' 🔥x'+comboMult()+'!':'';fb.innerHTML=FUN_FACTS.correct[Math.floor(Math.random()*FUN_FACTS.correct.length)]+' +'+earned+'⭐'+combTxt;fb.className='fb-box good show';}
+  } else {
+    combo=0;
+    const lead=q.kind==='math'?'❌ Not quite.':'❌ Good guess!';
+    fb.innerHTML=lead+' Answer: <strong>'+correctAns+'</strong> — combo reset!';
+    fb.className='fb-box bad show';
+  }
+  updateComboUI();
+  document.getElementById('next-btn').className='next-btn show';
+  document.getElementById('ex-stars').textContent=app.stars;
+}
+
+function nextQ(){curIdx++;renderQ();}
+
+function showFinish(){
+  quizActive=false;updateStreak();
+  // SCORE is based on MATH questions only (trivia is bonus, can't fail because of trivia)
+  const pct=Math.round((sesMathCorrect/sesMathTotal)*100);
+  const wasRushed=sesRushFlags.length>=RUSH_TRIGGER;
+  const failed=pct<PASS;
+  if(failed&&sesStarsEarned>0){removeStars(sesStarsEarned);sesDisplayStars=0;}
+  let finalStars=sesDisplayStars;
+  if(!failed&&wasRushed&&sesStarsEarned>0){const pen=Math.floor(sesStarsEarned*0.5);removeStars(pen);finalStars=sesStarsEarned-pen;}
+  if(!app.topicStats[curTopic])app.topicStats[curTopic]={attempts:0,totalPct:0,rushFlags:0,redos:0};
+  app.topicStats[curTopic].attempts++;app.topicStats[curTopic].totalPct+=pct;
+  if(wasRushed)app.topicStats[curTopic].rushFlags++;if(failed)app.topicStats[curTopic].redos++;
+  if(!failed)app.dailyPlays[curTopic]=(app.dailyPlays[curTopic]||0)+1;
+  let missionDone=false,allDone=false;
+  if(!failed&&app.missions.topics.includes(curTopic)&&!app.missions.done.includes(curTopic)){
+    app.missions.done.push(curTopic);missionDone=true;
+    if(app.missions.done.length===3&&app.missionBonusGiven!==todayStr()){app.missionBonusGiven=todayStr();finalStars+=addStars(MISSION_BONUS);allDone=true;}
+  }
+  app.history.unshift({topic:QB[curTopic].name,score:pct,stars:failed?0:finalStars,correct:sesMathCorrect,total:sesMathTotal,date:new Date().toLocaleDateString(),rushed:wasRushed,rushQs:sesRushFlags,cheatSwitches:cheatCount,failed:failed,redo:isRedo});
+  if(app.history.length>30)app.history.pop();
+  save();
+  document.getElementById('q-prog').style.width='100%';
+  document.getElementById('fb-box').className='fb-box';document.getElementById('next-btn').className='next-btn';
+  let html='';
+  if(failed){
+    html=`<div class="finish-card"><div class="finish-emoji">😤</div><h2>SO CLOSE!</h2>
+      <p>${sesMathCorrect} of ${sesMathTotal} math questions right — you need 50% to win stars.</p>
+      <div class="score-big" style="color:var(--pow-red)">0 ⭐</div>
+      <div class="score-pct" style="color:var(--pow-red)">${pct}% — stars removed this round</div>
+      <div class="info-pill" style="background:#fff0f0;color:var(--pow-red)">🔁 Take the REDO CHALLENGE to win them back! Your reward is safe.</div>
+      <div class="finish-btns"><button class="redo-btn" onclick="startTopic('${curTopic}',true)" style="flex:2">🔁 REDO!</button><button class="fb-home" onclick="showScreen('kid-hub')" style="flex:1">🏠 HOME</button></div></div>`;
+  } else {
+    const emoji=pct===100?'🏆':pct>=70?'🎉':'👍';const msg=pct===100?'LEGENDARY!':pct>=70?'HERO WIN!':'YOU PASSED!';
+    const lvl=getLevel(topicAvg(curTopic));
+    html=`<div class="finish-card"><div class="finish-emoji">${emoji}</div><h2>${isRedo?'REDO WIN! ':''}${msg}</h2>
+      <p>${sesMathCorrect}/${sesMathTotal} math correct · ${sesCorrect-sesMathCorrect} bonus trivia right</p>
+      <div class="score-big">⭐ +${finalStars}</div>
+      <div class="score-pct" style="color:${pct>=70?'var(--pow-green)':'var(--pow-orange)'}">${pct}% math score</div>
+      ${wasRushed?`<div class="info-pill" style="background:var(--pow-yellow)">⚡ ${sesRushFlags.length} too-fast answers. Stars cut 50%.</div>`:''}
+      ${cheatCount>0?`<div class="info-pill" style="background:#fff0f0;color:var(--pow-red)">🚫 ${cheatCount} tab switch${cheatCount>1?'es':''}. Super Dad sees this.</div>`:''}
+      ${missionDone?`<div class="info-pill" style="background:var(--pow-green)">🎯 MISSION COMPLETE!</div>`:''}
+      ${allDone?`<div class="info-pill" style="background:var(--pow-orange);color:#fff">🏆 ALL 3 MISSIONS! +${MISSION_BONUS} BONUS!</div>`:''}
+      <div class="info-pill" style="background:#e0ecff">${QB[curTopic].name} rank: ${lvl.emoji} ${lvl.label}</div>
+      <div class="finish-btns"><button class="fb-again" onclick="startTopic('${curTopic}')">🔁 AGAIN</button><button class="fb-home" onclick="showScreen('kid-hub')">🏠 HOME</button></div></div>`;
+    if(pct===100||allDone){launchConfetti();powSplash('WIN!');}
+  }
+  document.getElementById('q-container').innerHTML=html;
+}
+
+// HUB
+function refreshHub(){
+  checkDailyReset();
+  document.getElementById('star-count').textContent=app.stars;
+  document.getElementById('streak-count').textContent=app.streak||0;
+  const capPct=Math.min((app.dailyStars/DAILY_CAP)*100,100);
+  const cb=document.getElementById('cap-bar'),cbn=document.getElementById('cap-banner');
+  cb.style.width=capPct+'%';
+  if(app.dailyStars>=DAILY_CAP){cbn.className='cap-banner full';document.getElementById('cap-label').textContent='🚫 Cap reached!';document.getElementById('cap-right').textContent='Back tomorrow';cb.className='cap-bar-fill full';}
+  else{cbn.className='cap-banner';document.getElementById('cap-label').textContent='⭐ Today: '+app.dailyStars+'/'+DAILY_CAP;document.getElementById('cap-right').textContent=(DAILY_CAP-app.dailyStars)+' left';cb.className='cap-bar-fill';}
+  document.getElementById('missions-list').innerHTML=app.missions.topics.map(t=>{const done=app.missions.done.includes(t);return `<div class="mission-row"><div class="mission-check ${done?'done':''}">${done?'✓':''}</div><div class="mission-info"><strong>${QB[t].emoji} ${QB[t].name}</strong><span>Win one battle (50%+ math)</span></div>${done?'<button class="go-btn done-btn">✓ DONE</button>':`<button class="go-btn" onclick="startTopic('${t}')">GO!</button>`}</div>`;}).join('');
+  document.getElementById('missions-banner').className='missions-done-banner'+(app.missions.done.length===3?' show':'');
+  const sac=app.stars-app.rewardClaimed,goal=app.rewardGoal,curr=Math.min(Math.max(sac,0),goal);
+  document.getElementById('reward-name').textContent=app.rewardName;document.getElementById('rew-curr').textContent=curr;document.getElementById('rew-goal').textContent=goal;document.getElementById('rew-bar').style.width=Math.min((curr/goal)*100,100)+'%';
+  document.getElementById('claim-btn').className='claim-btn'+(sac>=goal?' show':'');
+  document.getElementById('xp-bar').style.width=((app.stars%100)/100*100)+'%';
+  document.getElementById('badges-row').innerHTML=Object.keys(QB).map(t=>{const a=topicAvg(t),lvl=getLevel(a);return `<div class="badge-chip"><span class="b-icon">${lvl.emoji}</span><div><div class="b-name">${QB[t].name}</div><div class="b-level">${lvl.label}</div></div></div>`;}).join('');
+  document.getElementById('topic-grid').innerHTML=Object.keys(QB).map(t=>{const p=app.dailyPlays[t]||0,m=REPEAT_MULTS[Math.min(p,REPEAT_MULTS.length-1)],lvl=getLevel(topicAvg(t)),isM=app.missions.topics.includes(t)&&!app.missions.done.includes(t);return `<div class="topic-card ${QB[t].cls}" onclick="startTopic('${t}')"><span class="t-emoji">${QB[t].emoji}</span><h3>${QB[t].name} ${isM?'🎯':''}</h3><p>${QB[t].grade}</p><span class="grade-tag">${m<1?Math.round(m*100)+'% ⭐':'Full ⭐'}</span><span class="lvl-tag">${lvl.emoji}</span>${p>0?`<span class="repeat-tag">${p}x today</span>`:''}</div>`;}).join('');
+  const list=document.getElementById('activity-list');
+  if(!app.history.length){list.innerHTML=`<div class="act-row"><div class="act-dot" style="background:#e2e8f0"></div><div class="act-info"><strong>No battles yet</strong><span>Start with today's missions!</span></div></div>`;return;}
+  list.innerHTML=app.history.slice(0,5).map(h=>{const c=Object.values(QB).find(x=>x.name===h.topic);return `<div class="act-row"><div class="act-dot" style="background:${c?c.color:'#94a3b8'}"></div><div class="act-info"><strong>${h.topic} ${h.rushed?'⚡':''}${h.failed?'🔁':''}</strong><span>${h.date} · ${h.correct}/${h.total} math · ${h.score}%</span></div><div class="act-pts">+${h.stars}</div></div>`;}).join('');
+}
+function claimReward(){launchConfetti();powSplash('YES!');app.rewardClaimed=app.stars;save();refreshHub();setTimeout(()=>alert('🎉 Reward claimed! Go tell Super Dad Vagner — you earned it! 💪'),300);}
+
+// PARENT
+function togglePin(){const i=document.getElementById('pin-input');i.type=i.type==='password'?'text':'password';}
+function checkPin(){cheatBlocked=true;if(document.getElementById('pin-input').value==='1234'){document.getElementById('p-login-form').style.display='none';document.getElementById('p-dash').style.display='flex';document.getElementById('p-err').style.display='none';document.getElementById('pin-input').value='';refreshDash();populateReport();}else{document.getElementById('p-err').style.display='block';}}
+function logoutParent(){document.getElementById('p-login-form').style.display='flex';document.getElementById('p-dash').style.display='none';showScreen('home');}
+function refreshDash(){
+  document.getElementById('d-stars').textContent=app.stars;document.getElementById('d-quizzes').textContent=app.history.length;
+  const avg=app.history.length?Math.round(app.history.reduce((a,h)=>a+h.score,0)/app.history.length):null;
+  document.getElementById('d-avg').textContent=avg!==null?avg+'%':'—';document.getElementById('d-streak').textContent=app.streak||0;
+  const rs=app.history.filter(h=>h.rushed),cs=app.history.filter(h=>h.cheatSwitches>0),fs=app.history.filter(h=>h.failed),tc=app.history.reduce((a,h)=>a+(h.cheatSwitches||0),0);
+  const ra=document.getElementById('d-rush-alert'),rh=document.getElementById('d-rush-hist');let parts=[];
+  if(rs.length)parts.push(`⚡ ${rs.length} rushed — stars cut 50%.`);if(cs.length)parts.push(`🚫 ${cs.length} with tab switches (${tc} total).`);if(fs.length)parts.push(`🔁 ${fs.length} failed under 50% — redo offered.`);
+  if(!parts.length){ra.className='rush-alert';rh.innerHTML='<div style="color:var(--muted);font-size:13px;padding:8px 0;font-weight:700">✅ No issues — Thomas is focused and passing!</div>';}
+  else{ra.className='rush-alert show';ra.textContent=parts.join(' ');const fl=[...new Set([...rs,...cs,...fs])].slice(0,6);rh.innerHTML=fl.map(h=>`<div class="h-row"><div class="hl"><strong>${h.topic}</strong><span>${h.date}${h.rushed?' · ⚡rushed':''}${h.cheatSwitches>0?' · 🚫'+h.cheatSwitches:''}${h.failed?' · 🔁failed':''}</span></div><div class="h-score hs-low">${h.score}%</div></div>`).join('');}
+  document.getElementById('d-topic-perf').innerHTML=Object.keys(QB).map(t=>{const s=app.topicStats[t],a=s?Math.round(s.totalPct/s.attempts):null,lvl=getLevel(a),ex=[];if(s&&s.rushFlags)ex.push('⚡'+s.rushFlags);if(s&&s.redos)ex.push('🔁'+s.redos);return `<div class="tp-box"><div class="tp-top"><div class="tp-name">${QB[t].name}</div><div>${lvl.emoji}</div></div><div class="tp-bar-bg"><div class="tp-bar-fill" style="width:${a||0}%;background:${QB[t].color}"></div></div><div class="tp-meta"><span>${s?s.attempts+' battle(s)':'None'}${ex.length?' · '+ex.join(' '):''}</span><span>${a!==null?a+'%':'—'}</span></div></div>`;}).join('');
+  const he=document.getElementById('d-hist');
+  if(!app.history.length){he.innerHTML='<div class="h-row"><div class="hl"><strong>No battles yet</strong></div></div>';}
+  else{he.innerHTML=app.history.slice(0,15).map(h=>{const cls=h.score>=70?'hs-high':h.score>=50?'hs-mid':'hs-low';const fl=(h.rushed?' ⚡':'')+(h.cheatSwitches>0?' 🚫'+h.cheatSwitches:'')+(h.failed?' 🔁':'')+(h.redo?' (redo)':'');return `<div class="h-row"><div class="hl"><strong>${h.topic}${fl}</strong><span>${h.date} · ${h.correct}/${h.total} math</span></div><div class="h-score ${cls}">${h.score}%</div></div>`;}).join('');}
+  document.getElementById('d-goal').value=app.rewardGoal;document.getElementById('d-reward-name').value=app.rewardName;
+}
+function saveReward(){const g=parseInt(document.getElementById('d-goal').value)||80,n=document.getElementById('d-reward-name').value.trim()||'Special reward!';app.rewardGoal=g;app.rewardName=n;save();const ok=document.getElementById('save-ok');ok.style.display='block';setTimeout(()=>ok.style.display='none',2000);}
+function resetAll(){if(confirm('Reset ALL progress for Thomas? Cannot be undone.')){app={stars:0,history:[],topicStats:{},rewardGoal:app.rewardGoal,rewardName:app.rewardName,rewardClaimed:0,streak:0,lastPracticeDate:'',dailyStars:0,dailyDate:'',dailyPlays:{},missions:{date:'',topics:[],done:[]},missionBonusGiven:''};save();checkDailyReset();refreshDash();populateReport();}}
+
+// REPORT
+function buildReportText(){
+  const avg=app.history.length?Math.round(app.history.reduce((a,h)=>a+h.score,0)/app.history.length):0;
+  const rn=app.history.filter(h=>h.rushed).length,cn=app.history.reduce((a,h)=>a+(h.cheatSwitches||0),0),fn=app.history.filter(h=>h.failed).length;
+  const tt=Object.keys(QB).map(t=>{const s=app.topicStats[t],a=s?Math.round(s.totalPct/s.attempts):null,lvl=getLevel(a),ex=[];if(s&&s.rushFlags)ex.push(s.rushFlags+' rushed');if(s&&s.redos)ex.push(s.redos+' redos');return `  - ${QB[t].name}: ${s?s.attempts+' battle(s), avg '+a+'% '+lvl.emoji:'None yet'}${ex.length?' ['+ex.join(', ')+']':''}`;}).join('\n');
+  const rt=app.history.slice(0,5).map(h=>`  - ${h.topic} ${h.date}: ${h.score}% (${h.correct}/${h.total} math)${h.rushed?' RUSHED':''}${h.failed?' FAILED':''}${h.cheatSwitches>0?' '+h.cheatSwitches+' SWITCHES':''}`).join('\n')||'  None yet.';
+  const mt=app.missions.done.length+'/3 ('+app.missions.topics.map(t=>QB[t].name).join(', ')+')';
+  const today=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  return `Thomas's Math Heroes — Progress Report
+Generated: ${today}
+
+NOTE: Score % is based on MATH questions only.
+Marvel & Fortnite trivia are fun bonus stars and do not affect pass/fail.
+
+OVERVIEW
+===================
+Stars Earned : ${app.stars}
+Battles Done : ${app.history.length}
+Avg Math Score: ${avg}%
+Day Streak   : ${app.streak||0}
+Missions Today: ${mt}
+
+FLAGS
+===================
+Rushed   : ${rn} (stars cut 50%)
+Tab Switch: ${cn} total (possible calculator use)
+Failed   : ${fn} (under 50% math — redo offered)
+
+MATH RANKS BY ZONE
+===================
+${tt}
+
+LAST 5 BATTLES
+===================
+${rt}
+
+REWARD
+===================
+Goal : "${app.rewardName}"
+Stars: ${Math.min(Math.max(app.stars-app.rewardClaimed,0),app.rewardGoal)} / ${app.rewardGoal}
+
+GAME RULES
+===================
+- 7 questions per battle: 5 math + 1 Marvel + 1 Fortnite
+- Only MATH counts toward your score (trivia = bonus stars)
+- Daily cap 80 stars
+- 3 daily missions, all 3 = +20 bonus
+- Repeat same zone same day: 100% then 50% then 25% stars
+- Under 50% math = 0 stars + redo (reward kept)
+- Combo: 3 right = x1.5, 5 right = x2
+
+— Math Heroes`;
+}
+function populateReport(){const el=document.getElementById('report-text');if(el)el.value=buildReportText();}
+function copyReport(){const t=document.getElementById('report-text').value;navigator.clipboard.writeText(t).then(showCopyOk).catch(()=>{document.getElementById('report-text').select();document.execCommand('copy');showCopyOk();});}
+function showCopyOk(){const c=document.getElementById('copy-confirm');c.style.display='inline';setTimeout(()=>c.style.display='none',2500);}
+
+// CONFETTI
+function launchConfetti(){const w=document.getElementById('confetti-wrap'),cv=document.getElementById('c-canvas');w.classList.add('on');cv.width=window.innerWidth;cv.height=window.innerHeight;const ctx=cv.getContext('2d');const ps=Array.from({length:150},()=>({x:Math.random()*cv.width,y:Math.random()*-cv.height*.5,r:Math.random()*10+4,dx:(Math.random()-.5)*3,dy:Math.random()*4+2,color:['#ffd60a','#06d6a0','#1d4ed8','#e63946','#7209b7','#fb8500'][Math.floor(Math.random()*6)],rot:Math.random()*360}));let f=0;function d(){ctx.clearRect(0,0,cv.width,cv.height);ps.forEach(p=>{ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);ctx.fillStyle=p.color;ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r*.6);ctx.restore();p.x+=p.dx;p.y+=p.dy;p.rot+=3;if(p.y>cv.height){p.y=-20;p.x=Math.random()*cv.width;}});if(++f<200)requestAnimationFrame(d);else{w.classList.remove('on');ctx.clearRect(0,0,cv.width,cv.height);}}d();}
+
+checkDailyReset();refreshHub();
+</script>
+</body>
+</html>
